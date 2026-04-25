@@ -38,15 +38,15 @@ export const MEMORY_COLORS: Record<MemoryType, string> = {
 };
 
 export const MEMORY_LABELS: Record<MemoryType, string> = {
-  daily: '日常',
-  travel: '旅行',
-  anniversary: '纪念日',
-  special: '特别',
-  note: '随记',
+  daily: '日常 Daily',
+  travel: '旅行 Travel',
+  anniversary: '纪念日 Anniversary',
+  special: '特别 Special',
+  note: '随记 Note',
 };
 
 export const USER_NAMES: Record<UserId, string> = {
-  shiyun: 'Shiyun',
+  shiyun: '诗云',
   tim: 'Tim',
 };
 

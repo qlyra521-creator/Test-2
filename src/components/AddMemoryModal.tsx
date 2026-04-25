@@ -106,7 +106,7 @@ export default function AddMemoryModal({ defaultDate, onClose }: Props) {
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/20">
-          <h2 className="font-serif text-xl font-light text-primary">记录这一天</h2>
+          <h2 className="font-serif text-xl font-light text-primary">记录这一天 · Record This Day</h2>
           <button onClick={onClose} className="text-secondary hover:text-primary transition-colors">
             <X size={17} />
           </button>
@@ -116,7 +116,7 @@ export default function AddMemoryModal({ defaultDate, onClose }: Props) {
           {/* Date */}
           <div className="flex gap-3 items-center">
             <div className="flex-1">
-              <label className="text-xs text-secondary/60 uppercase tracking-wider mb-1.5 block">日期</label>
+              <label className="text-xs text-secondary/60 uppercase tracking-wider mb-1.5 block">日期 · Date</label>
               <input
                 type="date"
                 value={date}
@@ -127,14 +127,14 @@ export default function AddMemoryModal({ defaultDate, onClose }: Props) {
             {dayOfJourney(date) > 0 && (
               <div className="glass rounded-xl px-4 py-2 text-center mt-5">
                 <div className="font-serif text-2xl text-primary">{dayOfJourney(date)}</div>
-                <div className="text-xs text-secondary">第几天</div>
+                <div className="text-xs text-secondary">第几天 · Day</div>
               </div>
             )}
           </div>
 
           {/* Type selector */}
           <div>
-            <label className="text-xs text-secondary/60 uppercase tracking-wider mb-2 block">类型</label>
+            <label className="text-xs text-secondary/60 uppercase tracking-wider mb-2 block">类型 · Type</label>
             <div className="flex gap-2 flex-wrap">
               {TYPES.map(t => (
                 <button
@@ -153,23 +153,23 @@ export default function AddMemoryModal({ defaultDate, onClose }: Props) {
 
           {/* Title */}
           <div>
-            <label className="text-xs text-secondary/60 uppercase tracking-wider mb-1.5 block">标题</label>
+            <label className="text-xs text-secondary/60 uppercase tracking-wider mb-1.5 block">标题 · Title</label>
             <input
               type="text"
               value={title}
               onChange={e => setTitle(e.target.value)}
-              placeholder="给这个记忆起个名字"
+              placeholder="给这个记忆起个名字 · Name this memory"
               maxLength={50}
             />
           </div>
 
           {/* Content */}
           <div>
-            <label className="text-xs text-secondary/60 uppercase tracking-wider mb-1.5 block">内容</label>
+            <label className="text-xs text-secondary/60 uppercase tracking-wider mb-1.5 block">内容 · Content</label>
             <textarea
               value={content}
               onChange={e => setContent(e.target.value)}
-              placeholder="写下今天发生的故事…"
+              placeholder="写下今天发生的故事 · Write your story…"
               rows={4}
               style={{ resize: 'vertical' }}
             />
@@ -182,19 +182,19 @@ export default function AddMemoryModal({ defaultDate, onClose }: Props) {
               type="text"
               value={location}
               onChange={e => setLocation(e.target.value)}
-              placeholder="地点（可选）"
+              placeholder="地点 Location（可选 optional）"
             />
           </div>
 
           {/* Photos */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-xs text-secondary/60 uppercase tracking-wider">照片</label>
+              <label className="text-xs text-secondary/60 uppercase tracking-wider">照片 · Photos</label>
               <button
                 onClick={() => fileInputRef.current?.click()}
                 className="flex items-center gap-1.5 text-xs text-secondary hover:text-primary transition-colors"
               >
-                <Camera size={13} /> 添加照片
+                <Camera size={13} /> 添加照片 · Add photos
               </button>
               <input
                 ref={fileInputRef}
@@ -237,12 +237,12 @@ export default function AddMemoryModal({ defaultDate, onClose }: Props) {
               <div className="flex-1">
                 {isRecording ? (
                   <div className="text-sm text-primary">
-                    录音中… {Math.floor(recordingSeconds / 60)}:{String(recordingSeconds % 60).padStart(2, '0')}
+                    录音中 · Recording… {Math.floor(recordingSeconds / 60)}:{String(recordingSeconds % 60).padStart(2, '0')}
                   </div>
                 ) : voiceNote ? (
-                  <div className="text-sm text-primary">已录制语音备忘</div>
+                  <div className="text-sm text-primary">已录制 · Recorded</div>
                 ) : (
-                  <div className="text-sm text-secondary">录制语音备忘（可选）</div>
+                  <div className="text-sm text-secondary">语音备忘 · Voice memo (optional)</div>
                 )}
               </div>
               {voiceNote && !isRecording && (
@@ -250,7 +250,7 @@ export default function AddMemoryModal({ defaultDate, onClose }: Props) {
                   onClick={() => setVoiceNote(undefined)}
                   className="text-xs text-secondary/60 hover:text-red-400 transition-colors"
                 >
-                  删除
+                  删除 · Remove
                 </button>
               )}
             </div>
@@ -263,7 +263,7 @@ export default function AddMemoryModal({ defaultDate, onClose }: Props) {
             onClick={onClose}
             className="px-5 py-2 rounded-full text-sm text-secondary hover:text-primary transition-colors"
           >
-            取消
+            取消 · Cancel
           </button>
           <button
             onClick={handleSave}
@@ -271,7 +271,7 @@ export default function AddMemoryModal({ defaultDate, onClose }: Props) {
             className="px-6 py-2 rounded-full text-sm text-white transition-all hover:opacity-90 disabled:opacity-40"
             style={{ background: 'linear-gradient(135deg, #C97EA0, #D4937A)' }}
           >
-            {saving ? '保存中…' : '保存记忆'}
+            {saving ? '保存中 · Saving…' : '保存记忆 · Save'}
           </button>
         </div>
       </div>

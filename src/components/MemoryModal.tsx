@@ -113,7 +113,7 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
 
               <div className="mt-6">
                 <div className="text-xs text-secondary/60 uppercase tracking-widest mb-1">
-                  Day of Journey
+                  第几天 · Day of Journey
                 </div>
                 <div className="font-serif text-5xl font-light text-primary">
                   {dot.dayOfJourney}
@@ -177,7 +177,7 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
             ) : (
               <div className="flex flex-col items-center gap-2 text-white/30 p-8">
                 <div className="text-4xl">✦</div>
-                <div className="text-xs">无图片</div>
+                <div className="text-xs">无图片 · No photo</div>
               </div>
             )}
           </div>
@@ -187,7 +187,7 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
             {/* Notes */}
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs text-secondary/60 uppercase tracking-wider">记录</span>
+                <span className="text-xs text-secondary/60 uppercase tracking-wider">记录 · Notes</span>
               </div>
               <div className="text-primary font-medium text-sm mb-2">{memory.title}</div>
               <div className="text-secondary text-sm leading-relaxed" style={{ whiteSpace: 'pre-wrap' }}>
@@ -210,7 +210,7 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
                 >
                   <Volume2 size={16} />
                 </button>
-                <span className="text-xs text-secondary">{playing ? '播放中…' : '点击播放语音'}</span>
+                <span className="text-xs text-secondary">{playing ? '播放中 · Playing…' : '点击播放语音 · Play voice'}</span>
               </div>
             )}
           </div>

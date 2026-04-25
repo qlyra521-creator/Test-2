@@ -31,7 +31,7 @@
 }
 
 body {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Inter', 'Noto Serif SC', '宋体', SimSun, system-ui, sans-serif;
   color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
@@ -68,7 +68,7 @@ body {
 }
 
 .font-serif {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Cormorant Garamond', 'Noto Serif SC', '宋体', SimSun, Georgia, serif;
 }
 
 .text-primary {

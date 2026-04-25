@@ -180,7 +180,7 @@ export default function StarGrid() {
                     : 'text-secondary hover:text-primary'
                 }`}
               >
-                {mode === 'mine' ? '只看我的' : mode === 'partner' ? '只看Ta的' : '合并'}
+                {mode === 'mine' ? '只看我的 Mine' : mode === 'partner' ? '只看Ta的 Partner' : '合并 Merged'}
               </button>
             ))}
           </div>
@@ -343,7 +343,7 @@ export default function StarGrid() {
                 )}
               </div>
             ) : (
-              <div className="text-secondary" style={{ fontSize: 11 }}>点击添加记忆</div>
+              <div className="text-secondary" style={{ fontSize: 11 }}>点击添加记忆 · Click to add</div>
             )}
           </div>
         )}
@@ -352,15 +352,15 @@ export default function StarGrid() {
       {/* Stats bar */}
       <div className="flex items-end justify-between mt-3 px-2">
         <div>
-          <div className="text-xs text-secondary/60 uppercase tracking-widest">Days from Start</div>
+          <div className="text-xs text-secondary/60 uppercase tracking-widest">起始 · Day 1</div>
           <div className="font-serif text-3xl font-light text-primary">1</div>
           <div className="text-xs text-secondary/50 mt-0.5">APR 2024</div>
         </div>
         <div className="text-secondary/40 text-xs italic text-center">
-          Shiyun & Tim
+          诗云 & Tim
         </div>
         <div className="text-right">
-          <div className="text-xs text-secondary/60 uppercase tracking-widest">Days to Today</div>
+          <div className="text-xs text-secondary/60 uppercase tracking-widest">今天 · Days to Today</div>
           <div className="font-serif text-3xl font-light text-primary">{totalDays}</div>
           <div className="text-xs text-secondary/50 mt-0.5">
             {['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][new Date().getMonth()]} {new Date().getFullYear()}

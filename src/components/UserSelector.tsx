@@ -12,8 +12,8 @@ export default function UserSelector() {
   const daysToAnniversary = daysBetween(today, ANNIVERSARY_DATE);
 
   const profiles: { id: UserId; name: string; nameZh: string; desc: string }[] = [
-    { id: 'shiyun', name: 'Shiyun', nameZh: '世芸', desc: '继续我们的旅程' },
-    { id: 'tim', name: 'Tim', nameZh: 'Tim', desc: '继续我们的旅程' },
+    { id: 'shiyun', name: '诗云', nameZh: 'Shiyun', desc: '继续我们的旅程 · Continue our journey' },
+    { id: 'tim', name: 'Tim', nameZh: 'Tim', desc: '继续我们的旅程 · Continue our journey' },
   ];
 
   return (
@@ -44,7 +44,7 @@ export default function UserSelector() {
         <div className="flex gap-12 items-center">
           <div>
             <div className="font-serif text-4xl font-light text-primary">{totalDays}</div>
-            <div className="text-xs text-secondary mt-1 uppercase tracking-wider">Days Together</div>
+            <div className="text-xs text-secondary mt-1 uppercase tracking-wider">在一起 · Days Together</div>
           </div>
           <div className="w-px h-10 bg-white/40" />
           <div>
@@ -52,13 +52,13 @@ export default function UserSelector() {
               {daysToAnniversary > 0 ? daysToAnniversary : '🎉'}
             </div>
             <div className="text-xs text-secondary mt-1 uppercase tracking-wider">
-              {daysToAnniversary > 0 ? 'Days to 2nd Anni.' : '2nd Anniversary!'}
+              {daysToAnniversary > 0 ? '两周年 · 2nd Anniversary' : '两周年快乐 · Happy 2nd Anniversary!'}
             </div>
           </div>
           <div className="w-px h-10 bg-white/40" />
           <div>
             <div className="font-serif text-lg font-light text-primary">2024.04.29</div>
-            <div className="text-xs text-secondary mt-1 uppercase tracking-wider">Since</div>
+            <div className="text-xs text-secondary mt-1 uppercase tracking-wider">起始 · Since</div>
           </div>
         </div>
       </div>
@@ -85,7 +85,7 @@ export default function UserSelector() {
             </div>
             <div className="text-center">
               <div className="font-serif text-2xl font-light text-primary">{profile.name}</div>
-              <div className="text-secondary text-sm mt-0.5">{profile.nameZh}</div>
+              <div className="text-secondary text-xs mt-0.5 tracking-wider">{profile.nameZh}</div>
             </div>
             <div className="text-xs text-secondary/70 mt-1">{profile.desc}</div>
             <div
@@ -96,7 +96,7 @@ export default function UserSelector() {
                   : 'linear-gradient(135deg, #7DAFC8, #9AACAA)',
               }}
             >
-              进入 →
+              进入 Enter →
             </div>
           </button>
         ))}
@@ -104,7 +104,7 @@ export default function UserSelector() {
 
       {/* Footer */}
       <p className="mt-12 text-xs text-secondary/60 text-center animate-fade-in" style={{ animationDelay: '0.3s' }}>
-        Shiyun & Tim · 2024.04.29 — forever
+        诗云 & Tim · 2024.04.29 — forever
       </p>
     </div>
   );

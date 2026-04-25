@@ -45,7 +45,7 @@ export default function Navigation() {
             : 'text-secondary hover:text-primary'
         }`}
       >
-        星点
+        星点 Stars
       </button>
       <button
         onClick={() => setCurrentView('letters')}
@@ -56,7 +56,7 @@ export default function Navigation() {
         }`}
       >
         <Mail size={12} />
-        <span>信件</span>
+        <span>信件 Letters</span>
       </button>
 
       {/* Divider */}
@@ -75,6 +75,7 @@ export default function Navigation() {
       <div className="flex items-center gap-1.5 text-secondary text-xs hidden md:flex">
         <Calendar size={13} />
         <span className="font-light italic">Apr 2024 — {END_LABEL}</span>
+        <span className="text-secondary/50">· 诗云 & Tim</span>
       </div>
 
       {/* User avatars */}
