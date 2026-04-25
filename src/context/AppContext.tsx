@@ -21,6 +21,12 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | null>(null);
 
+const APP_VERSION = '2';
+if (typeof window !== 'undefined' && localStorage.getItem('rm_version') !== APP_VERSION) {
+  localStorage.removeItem('rm_letters');
+  localStorage.setItem('rm_version', APP_VERSION);
+}
+
 function loadFromStorage<T>(key: string, fallback: T): T {
   try {
     const raw = localStorage.getItem(key);
