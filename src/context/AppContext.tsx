@@ -13,6 +13,7 @@ interface AppContextType {
   setCurrentView: (v: AppView) => void;
   memories: Memory[];
   addMemory: (m: Memory) => void;
+  updateMemory: (m: Memory) => void;
   deleteMemory: (id: string) => void;
   letters: Letter[];
   addLetter: (l: Letter) => void;
@@ -128,6 +129,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           return [...prev, rowToMemory(payload.new as Record<string, unknown>)].sort((a, b) => a.date.localeCompare(b.date));
         });
       })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'memories' }, payload => {
+        setMemories(prev => prev.map(m =>
+          m.id === (payload.new as Record<string, unknown>).id ? rowToMemory(payload.new as Record<string, unknown>) : m
+        ));
+      })
       .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'memories' }, payload => {
         setMemories(prev => prev.filter(m => m.id !== (payload.old as Record<string, unknown>).id));
       })
@@ -171,6 +177,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     await supabase.from('memories').insert(memoryToRow(m));
   }, []);
 
+  const updateMemory = useCallback(async (m: Memory) => {
+    setMemories(prev => prev.map(mem => mem.id === m.id ? m : mem));
+    await supabase.from('memories').update(memoryToRow(m)).eq('id', m.id);
+  }, []);
+
   const deleteMemory = useCallback(async (id: string) => {
     setMemories(prev => prev.filter(m => m.id !== id));
     await supabase.from('memories').delete().eq('id', id);
@@ -196,7 +207,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       viewMode, setViewMode,
       theme, setTheme,
       currentView, setCurrentView,
-      memories, addMemory, deleteMemory,
+      memories, addMemory, updateMemory, deleteMemory,
       letters, addLetter, markLetterRead,
       loading,
     }}>

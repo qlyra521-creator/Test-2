@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { X, Edit2, Trash2, ChevronLeft, ChevronRight, Volume2, Plus, MapPin } from 'lucide-react';
+import { X, Edit2, Trash2, ChevronLeft, ChevronRight, Volume2, MapPin } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { Memory, MemoryType, MEMORY_COLORS, MEMORY_LABELS, USER_NAMES } from '../types';
 import { formatDateEN } from '../utils/dateUtils';
+import AddMemoryModal from './AddMemoryModal';
 
 // Morandi-toned card backgrounds per type
 const TYPE_BG: Record<MemoryType, { card: string; mid: string; border: string }> = {
@@ -31,6 +32,7 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
   const [photoIdx, setPhotoIdx] = useState(0);
   const [audioEl, setAudioEl] = useState<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
 
   const memory = dot.memories[memIdx];
   if (!memory) return null;
@@ -73,6 +75,7 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
   const bg = TYPE_BG[memory.type];
 
   return (
+    <>
     <div className="modal-overlay" onClick={onClose}>
       <div
         className="w-full max-w-3xl overflow-hidden animate-slide-up"
@@ -110,9 +113,11 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
                 <Trash2 size={15} />
               </button>
             )}
-            <button onClick={onAddMemory} className="text-secondary hover:text-primary transition-colors" title="添加记忆">
-              <Plus size={15} />
-            </button>
+            {canEdit && (
+              <button onClick={() => setShowEdit(true)} className="text-secondary hover:text-primary transition-colors" title="编辑记忆">
+                <Edit2 size={15} />
+              </button>
+            )}
             <button onClick={onClose} className="text-secondary hover:text-primary transition-colors">
               <X size={17} />
             </button>
@@ -237,5 +242,14 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
         </div>
       </div>
     </div>
+
+    {showEdit && (
+      <AddMemoryModal
+        defaultDate={dot.dateStr}
+        editMemory={memory}
+        onClose={() => setShowEdit(false)}
+      />
+    )}
+    </>
   );
 }

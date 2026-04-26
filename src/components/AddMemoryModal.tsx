@@ -8,19 +8,20 @@ import { dayOfJourney, toDateStr } from '../utils/dateUtils';
 interface Props {
   defaultDate: string;
   onClose: () => void;
+  editMemory?: Memory;
 }
 
 const TYPES: MemoryType[] = ['daily', 'travel', 'anniversary', 'special', 'note'];
 
-export default function AddMemoryModal({ defaultDate, onClose }: Props) {
-  const { currentUser, addMemory } = useApp();
-  const [date, setDate] = useState(defaultDate);
-  const [type, setType] = useState<MemoryType>('daily');
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [location, setLocation] = useState('');
-  const [photos, setPhotos] = useState<string[]>([]);
-  const [voiceNote, setVoiceNote] = useState<string | undefined>();
+export default function AddMemoryModal({ defaultDate, onClose, editMemory }: Props) {
+  const { currentUser, addMemory, updateMemory } = useApp();
+  const [date, setDate] = useState(editMemory?.date ?? defaultDate);
+  const [type, setType] = useState<MemoryType>(editMemory?.type ?? 'daily');
+  const [title, setTitle] = useState(editMemory?.title ?? '');
+  const [content, setContent] = useState(editMemory?.content ?? '');
+  const [location, setLocation] = useState(editMemory?.location ?? '');
+  const [photos, setPhotos] = useState<string[]>(editMemory?.photos ?? []);
+  const [voiceNote, setVoiceNote] = useState<string | undefined>(editMemory?.voiceNote);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -83,20 +84,32 @@ export default function AddMemoryModal({ defaultDate, onClose }: Props) {
     if (!title.trim()) { alert('请填写标题'); return; }
     setSaving(true);
 
-    const memory: Memory = {
-      id: `m_${Date.now()}_${Math.random().toString(36).slice(2)}`,
-      date,
-      author: currentUser,
-      type,
-      title: title.trim(),
-      content: content.trim(),
-      photos,
-      voiceNote,
-      location: location.trim() || undefined,
-      dayOfJourney: dayOfJourney(date),
-    };
-
-    addMemory(memory);
+    if (editMemory) {
+      const updated: Memory = {
+        ...editMemory,
+        type,
+        title: title.trim(),
+        content: content.trim(),
+        photos,
+        voiceNote,
+        location: location.trim() || undefined,
+      };
+      updateMemory(updated);
+    } else {
+      const memory: Memory = {
+        id: `m_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+        date,
+        author: currentUser,
+        type,
+        title: title.trim(),
+        content: content.trim(),
+        photos,
+        voiceNote,
+        location: location.trim() || undefined,
+        dayOfJourney: dayOfJourney(date),
+      };
+      addMemory(memory);
+    }
     onClose();
   };
 
@@ -108,7 +121,7 @@ export default function AddMemoryModal({ defaultDate, onClose }: Props) {
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/20">
-          <h2 className="font-serif text-xl font-light text-primary">记录这一天 · Record This Day</h2>
+          <h2 className="font-serif text-xl font-light text-primary">{editMemory ? '编辑记忆 · Edit Memory' : '记录这一天 · Record This Day'}</h2>
           <button onClick={onClose} className="text-secondary hover:text-primary transition-colors">
             <X size={17} />
           </button>
