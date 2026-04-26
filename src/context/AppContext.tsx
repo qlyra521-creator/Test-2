@@ -110,14 +110,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         supabase.from('memories').select('*').order('date', { ascending: true }),
         supabase.from('letters').select('*').order('created_at', { ascending: true }),
       ]);
-      console.log('[RememberWe] memories fetch:', mems?.length ?? 0, 'rows', memErr ?? '');
-      console.log('[RememberWe] letters fetch:', lets?.length ?? 0, 'rows', letErr ?? '');
       if (!cancelled) {
-        try {
-          setMemories((mems ?? []).map(rowToMemory));
-        } catch (e) {
-          console.error('[RememberWe] rowToMemory error:', e);
-        }
+        setMemories((mems ?? []).map(rowToMemory));
         setLetters((lets ?? []).map(rowToLetter));
         setLoading(false);
       }
