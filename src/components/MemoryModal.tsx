@@ -29,7 +29,7 @@ interface Props {
 }
 
 export default function MemoryModal({ dot, onClose, onAddMemory, onPrev, onNext }: Props) {
-  const { currentUser, deleteMemory, memories, viewMode, fetchMemoryMedia } = useApp();
+  const { currentUser, deleteMemory, memories, viewMode } = useApp();
   const [memIdx, setMemIdx] = useState(0);
   const [photoIdx, setPhotoIdx] = useState(0);
   const [audioEl, setAudioEl] = useState<HTMLAudioElement | null>(null);
@@ -54,24 +54,14 @@ export default function MemoryModal({ dot, onClose, onAddMemory, onPrev, onNext 
 
   const memory = liveMemories[memIdx];
 
-  // Fetch photos/voice on demand (not loaded in initial list query)
-  useEffect(() => {
-    if (!memory) return;
-    if (livePhotos.length > 0) {
-      setLivePhotos(livePhotos);
-      setLiveVoiceNote(liveVoiceNote);
-    } else {
-      setLivePhotos([]);
-      setLiveVoiceNote(undefined);
-      fetchMemoryMedia(memory.id).then(({ photos, voiceNote }) => {
-        setLivePhotos(photos);
-        setLiveVoiceNote(voiceNote);
-      });
-    }
-    setPhotoIdx(0);
-    setAudioEl(null);
-    setPlaying(false);
-  }, [memory?.id]);
+ useEffect(() => {
+  if (!memory) return;
+  setLivePhotos(memory.photos ?? []);
+  setLiveVoiceNote(memory.voiceNote);
+  setPhotoIdx(0);
+  setAudioEl(null);
+  setPlaying(false);
+}, [memory?.id, memory?.photos, memory?.voiceNote]);
 
   if (!memory) return null;
 
