@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { Plus } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { Memory, MemoryType, MEMORY_COLORS, MEMORY_LABELS, UserId, PARTNER, START_DATE } from '../types';
@@ -104,19 +104,18 @@ export default function StarGrid() {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
-  const months = generateMonthGroups();
+  const months = useMemo(() => generateMonthGroups(), []);
   const numRows = months.length > 0 ? months[months.length - 1].rowIdx + 1 : 1;
   const SVG_H = numRows * YEAR_ROW_H + TOP_PAD + 20;
 
-  // Filter memories based on viewMode
-  const filtered = memories.filter(m => {
+  const filtered = useMemo(() => memories.filter(m => {
     if (!currentUser) return true;
     if (viewMode === 'mine') return m.author === currentUser;
     if (viewMode === 'partner') return m.author === PARTNER[currentUser];
-    return true; // merged
-  });
+    return true;
+  }), [memories, currentUser, viewMode]);
 
-  const dots = buildDots(months, filtered);
+  const dots = useMemo(() => buildDots(months, filtered), [months, filtered]);
   const today = new Date();
   const totalDays = daysBetween(START_DATE, today) + 1;
 
@@ -137,24 +136,22 @@ export default function StarGrid() {
     setTooltip(null);
   }, []);
 
-  // Build month label positions
-  const monthLabels = months.map(mg => {
+  const monthLabels = useMemo(() => months.map(mg => {
     const x = LEFT_PAD + mg.colIdx * MONTH_SLOT_W + MONTH_SLOT_W / 2;
     const y = TOP_PAD + mg.rowIdx * YEAR_ROW_H + 31 * DAY_H + MONTH_LABEL_H / 2 + 4;
     return { x, y, label: mg.label, key: `${mg.year}-${mg.month}` };
-  });
+  }), [months]);
 
-  // Year row separator labels
-  const yearLabels: { y: number; label: string }[] = [];
-  for (let r = 0; r < numRows; r++) {
-    const firstMonth = months.find(m => m.rowIdx === r);
-    if (firstMonth) {
-      yearLabels.push({
-        y: TOP_PAD + r * YEAR_ROW_H - 6,
-        label: `Year ${r + 1}  ·  ${firstMonth.year}`,
-      });
+  const yearLabels = useMemo(() => {
+    const labels: { y: number; label: string }[] = [];
+    for (let r = 0; r < numRows; r++) {
+      const firstMonth = months.find(m => m.rowIdx === r);
+      if (firstMonth) {
+        labels.push({ y: TOP_PAD + r * YEAR_ROW_H - 6, label: `Year ${r + 1}  ·  ${firstMonth.year}` });
+      }
     }
-  }
+    return labels;
+  }, [months, numRows]);
 
   return (
     <div className="pt-16 pb-4 px-4 flex flex-col h-screen">

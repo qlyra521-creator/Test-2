@@ -1,7 +1,8 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { X, Camera, Mic, MicOff, MapPin, Map } from 'lucide-react';
+import { X, Camera, Mic, MicOff, MapPin, Map, Loader } from 'lucide-react';
 import MapPicker from './MapPicker';
 import { useApp } from '../context/AppContext';
+import { supabase } from '../lib/supabase';
 import { Memory, MemoryType, MEMORY_COLORS, MEMORY_LABELS } from '../types';
 import { dayOfJourney, toDateStr } from '../utils/dateUtils';
 
@@ -25,6 +26,7 @@ export default function AddMemoryModal({ defaultDate, onClose, editMemory }: Pro
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [saving, setSaving] = useState(false);
+  const [uploadingCount, setUploadingCount] = useState(0);
   const [showMap, setShowMap] = useState(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -34,17 +36,26 @@ export default function AddMemoryModal({ defaultDate, onClose, editMemory }: Pro
 
   const today = toDateStr(new Date());
 
-  const handlePhotoSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
-    Array.from(files).forEach(file => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPhotos(prev => [...prev, reader.result as string]);
-      };
-      reader.readAsDataURL(file);
-    });
+    const fileArr = Array.from(files);
     e.target.value = '';
+    setUploadingCount(prev => prev + fileArr.length);
+    await Promise.all(fileArr.map(async file => {
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const path = `${Date.now()}-${Math.random().toString(36).slice(2)}-${safeName}`;
+      const { data, error } = await supabase.storage
+        .from('memory-photos')
+        .upload(path, file, { upsert: false });
+      if (!error && data) {
+        const { data: { publicUrl } } = supabase.storage
+          .from('memory-photos')
+          .getPublicUrl(data.path);
+        setPhotos(prev => [...prev, publicUrl]);
+      }
+      setUploadingCount(prev => prev - 1);
+    }));
   }, []);
 
   const startRecording = async () => {
@@ -225,9 +236,13 @@ export default function AddMemoryModal({ defaultDate, onClose, editMemory }: Pro
               <label className="text-xs text-secondary/60 uppercase tracking-wider">照片 · Photos</label>
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-1.5 text-xs text-secondary hover:text-primary transition-colors"
+                disabled={uploadingCount > 0}
+                className="flex items-center gap-1.5 text-xs text-secondary hover:text-primary transition-colors disabled:opacity-50"
               >
-                <Camera size={13} /> 添加照片 · Add photos
+                {uploadingCount > 0
+                  ? <><Loader size={13} className="animate-spin" /> 上传中 · Uploading…</>
+                  : <><Camera size={13} /> 添加照片 · Add photos</>
+                }
               </button>
               <input
                 ref={fileInputRef}
@@ -305,7 +320,7 @@ export default function AddMemoryModal({ defaultDate, onClose, editMemory }: Pro
           </button>
           <button
             onClick={handleSave}
-            disabled={saving || !title.trim()}
+            disabled={saving || uploadingCount > 0 || !title.trim()}
             className="px-6 py-2 rounded-full text-sm text-white transition-all hover:opacity-90 disabled:opacity-35 flex items-center gap-1.5"
             style={{ background: 'linear-gradient(135deg, #C97EA0 0%, #9AACAA 100%)', boxShadow: '0 2px 12px rgba(201,126,160,0.3)' }}
           >
