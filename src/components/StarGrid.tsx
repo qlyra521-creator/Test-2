@@ -189,11 +189,11 @@ export default function StarGrid() {
 
       {/* SVG Grid */}
       <div className="flex-1 overflow-auto relative">
+        <div style={{ minWidth: SVG_W }}>
         <svg
           ref={svgRef}
           viewBox={`0 0 ${SVG_W} ${SVG_H}`}
-          width={SVG_W}
-          height={SVG_H}
+          width="100%"
           style={{ display: 'block' }}
         >
           <defs>
@@ -313,6 +313,7 @@ export default function StarGrid() {
             );
           })}
         </svg>
+        </div>
 
         {/* Tooltip */}
         {tooltip && (
