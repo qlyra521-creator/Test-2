@@ -120,10 +120,9 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
         </div>
 
         {/* Body */}
-        <div className="grid grid-cols-3 gap-0 min-h-64">
+        <div className={`grid gap-0 min-h-64 ${memory.photos.length > 0 ? 'grid-cols-3' : 'grid-cols-2'}`}>
           {/* Left: Date & stats */}
           <div className="p-4 flex flex-col gap-3" style={{ borderRight: `1px solid ${bg.border}` }}>
-            {/* Date block */}
             <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.52)' }}>
               <div className="font-serif italic text-3xl font-light text-primary leading-tight">
                 {monthName} {dayNum}
@@ -131,7 +130,6 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
               <div className="text-secondary text-sm mt-1">{yearNum}</div>
             </div>
 
-            {/* Day of Journey block */}
             <div className="rounded-2xl p-4 flex-1" style={{ background: 'rgba(255,255,255,0.52)' }}>
               <div className="text-xs text-secondary/60 uppercase tracking-widest mb-1">
                 Day of Journey
@@ -155,9 +153,9 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
             </div>
           </div>
 
-          {/* Middle: Photo */}
-          <div className="relative flex items-center justify-center overflow-hidden p-4">
-            {memory.photos.length > 0 ? (
+          {/* Middle: Photo — only rendered when photos exist */}
+          {memory.photos.length > 0 && (
+            <div className="relative flex items-center justify-center overflow-hidden p-4">
               <div className="relative w-full h-full rounded-2xl overflow-hidden" style={{ minHeight: 220 }}>
                 <img
                   src={memory.photos[photoIdx]}
@@ -193,88 +191,8 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
                   </>
                 )}
               </div>
-            ) : (
-              <div className="flex items-center justify-center w-full h-full rounded-2xl" style={{ minHeight: 220, background: 'rgba(255,255,255,0.52)' }}>
-                {(() => {
-                  const S = 'rgba(50,38,62,0.78)';   // stroke / dark
-                  const G = 'rgba(245,208,130,0.82)'; // golden dog fill
-                  const W = 'rgba(255,255,255,0.84)'; // white dog fill
-                  const sw = (w: number) => ({ stroke: S, strokeWidth: w, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const });
-                  return (
-                    <svg viewBox="0 0 200 168" width="188" fill="none" xmlns="http://www.w3.org/2000/svg">
-
-                      {/* ── WHITE DOG (back) body + head ── */}
-                      <ellipse cx="124" cy="122" rx="22" ry="16" fill={W} {...sw(2)}/>
-                      <circle  cx="126" cy="81"  r="21"           fill={W} {...sw(2)}/>
-                      {/* round ears */}
-                      <circle cx="109" cy="63" r="9" fill={W} {...sw(2)}/>
-                      <circle cx="143" cy="63" r="9" fill={W} {...sw(2)}/>
-                      {/* eye marks */}
-                      <path d="M118 72 L121 69 L124 72" fill="none" {...sw(1.4)}/>
-                      <path d="M128 72 L131 69 L134 72" fill="none" {...sw(1.4)}/>
-                      {/* eyes – happy squint arcs */}
-                      <path d="M116 78 Q121 84 126 78" fill="none" {...sw(2.3)}/>
-                      <path d="M126 78 Q131 84 136 78" fill="none" {...sw(2.3)}/>
-                      {/* nose */}
-                      <ellipse cx="126" cy="87" rx="5" ry="2.8" fill={S} stroke="none"/>
-                      {/* smile */}
-                      <path d="M118 93 Q126 100 134 93" fill="none" {...sw(1.8)}/>
-
-                      {/* ── WHITE DOG arms hugging (drawn before golden dog body) ── */}
-                      {/* left arm – white body then outline */}
-                      <path d="M105 108 Q82 116 66 132" stroke={W}  strokeWidth="9"  strokeLinecap="round"/>
-                      <path d="M105 108 Q82 116 66 132" stroke={S}   strokeWidth="2"  strokeLinecap="round" fill="none"/>
-                      {/* right arm */}
-                      <path d="M107 120 Q86 128 72 143" stroke={W}  strokeWidth="9"  strokeLinecap="round"/>
-                      <path d="M107 120 Q86 128 72 143" stroke={S}   strokeWidth="2"  strokeLinecap="round" fill="none"/>
-
-                      {/* ── GOLDEN DOG (front) ── */}
-                      {/* tail */}
-                      <path d="M56 118 Q43 107 47 126 Q50 136 60 128" fill={G} {...sw(1.9)}/>
-                      {/* body */}
-                      <ellipse cx="78" cy="124" rx="26" ry="20" fill={G} {...sw(2)}/>
-                      {/* head */}
-                      <circle cx="78" cy="80" r="26" fill={G} {...sw(2)}/>
-                      {/* round ears */}
-                      <circle cx="56" cy="58" r="12" fill={G} {...sw(2)}/>
-                      <circle cx="100" cy="58" r="12" fill={G} {...sw(2)}/>
-                      {/* eye marks */}
-                      <path d="M65 69 L68 66 L71 69" fill="none" {...sw(1.5)}/>
-                      <path d="M85 69 L88 66 L91 69" fill="none" {...sw(1.5)}/>
-                      {/* eyes – dot style */}
-                      <circle cx="68" cy="77" r="3"   fill={S} stroke="none"/>
-                      <circle cx="88" cy="77" r="3"   fill={S} stroke="none"/>
-                      {/* nose */}
-                      <ellipse cx="78" cy="87" rx="6"  ry="3.5" fill={S} stroke="none"/>
-                      {/* smile */}
-                      <path d="M68 94 Q78 102 88 94" fill="none" {...sw(2)}/>
-                      {/* collar – coral/terracotta */}
-                      <path d="M55 108 Q78 118 101 108" fill="none" stroke="#D4937A" strokeWidth="3.5" strokeLinecap="round"/>
-                      {/* front paws */}
-                      <ellipse cx="62" cy="142" rx="10" ry="5" fill={G} {...sw(1.8)}/>
-                      <ellipse cx="91" cy="144" rx="10" ry="5" fill={G} {...sw(1.8)}/>
-
-                      {/* white dog paws (ends of arms, in front) */}
-                      <ellipse cx="63" cy="134" rx="8" ry="4.5" fill={W} {...sw(1.8)}/>
-                      <ellipse cx="69" cy="146" rx="8" ry="4.5" fill={W} {...sw(1.8)}/>
-
-                      {/* ── Speech bubble ── */}
-                      <rect x="50" y="3" width="100" height="26" rx="9"
-                        fill="rgba(255,255,255,0.88)" stroke="rgba(50,38,62,0.3)" strokeWidth="1.2"/>
-                      <path d="M86 29 L91 37 L96 29"
-                        fill="rgba(255,255,255,0.88)" stroke="rgba(50,38,62,0.3)" strokeWidth="1.2" strokeLinejoin="round"/>
-                      <text x="100" y="20" textAnchor="middle"
-                        fontSize="8.5" fontFamily="Cormorant Garamond, serif" fontStyle="italic"
-                        fill="rgba(50,38,62,0.72)">
-                        Add some photos~
-                      </text>
-
-                    </svg>
-                  );
-                })()}
-              </div>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Right: Notes & voice */}
           <div className="p-4 flex flex-col gap-3" style={{ borderLeft: `1px solid ${bg.border}` }}>
@@ -293,6 +211,36 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
             <div className="text-xs text-secondary/50 italic px-1">
               by {USER_NAMES[memory.author]}
             </div>
+
+            {/* No-photo prompt — small, at bottom */}
+            {memory.photos.length === 0 && (
+              <div className="rounded-2xl p-3 flex items-center gap-3" style={{ background: 'rgba(255,255,255,0.52)' }}>
+                <svg viewBox="0 0 120 72" width="90" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  {/* White fluffy dog (left) */}
+                  <ellipse cx="34" cy="54" rx="18" ry="13" fill="rgba(255,255,255,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.6" strokeLinejoin="round"/>
+                  <circle cx="34" cy="30" r="16" fill="rgba(255,255,255,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.6"/>
+                  <circle cx="24" cy="18" r="7" fill="rgba(255,255,255,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.6"/>
+                  <circle cx="44" cy="18" r="7" fill="rgba(255,255,255,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.6"/>
+                  <circle cx="29" cy="29" r="2" fill="rgba(50,38,62,0.75)"/>
+                  <circle cx="39" cy="29" r="2" fill="rgba(50,38,62,0.75)"/>
+                  <path d="M28 36 Q34 41 40 36" fill="none" stroke="rgba(50,38,62,0.7)" strokeWidth="1.4" strokeLinecap="round"/>
+                  <ellipse cx="28" cy="65" rx="7" ry="3.5" fill="rgba(255,255,255,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.4"/>
+                  <ellipse cx="40" cy="65" rx="7" ry="3.5" fill="rgba(255,255,255,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.4"/>
+                  {/* Tan dog (right) */}
+                  <ellipse cx="84" cy="54" rx="18" ry="13" fill="rgba(230,185,110,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.6" strokeLinejoin="round"/>
+                  <circle cx="84" cy="30" r="16" fill="rgba(230,185,110,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.6"/>
+                  <ellipse cx="70" cy="34" rx="7" ry="11" fill="rgba(230,185,110,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.6"/>
+                  <ellipse cx="98" cy="34" rx="7" ry="11" fill="rgba(230,185,110,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.6"/>
+                  <circle cx="79" cy="29" r="2" fill="rgba(50,38,62,0.75)"/>
+                  <circle cx="89" cy="29" r="2" fill="rgba(50,38,62,0.75)"/>
+                  <path d="M78 36 Q84 41 90 36" fill="none" stroke="rgba(50,38,62,0.7)" strokeWidth="1.4" strokeLinecap="round"/>
+                  <path d="M69 46 Q84 52 99 46" fill="none" stroke="#D4937A" strokeWidth="2.5" strokeLinecap="round"/>
+                  <ellipse cx="78" cy="65" rx="7" ry="3.5" fill="rgba(230,185,110,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.4"/>
+                  <ellipse cx="90" cy="65" rx="7" ry="3.5" fill="rgba(230,185,110,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.4"/>
+                </svg>
+                <span className="text-xs text-secondary/50 italic leading-relaxed">Add some photos~</span>
+              </div>
+            )}
 
             {/* Voice note block */}
             {memory.voiceNote && (
