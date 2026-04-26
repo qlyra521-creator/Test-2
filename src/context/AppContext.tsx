@@ -106,12 +106,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let cancelled = false;
     async function fetchData() {
-      const [{ data: mems }, { data: lets }] = await Promise.all([
+      const [{ data: mems, error: memErr }, { data: lets, error: letErr }] = await Promise.all([
         supabase.from('memories').select('*').order('date', { ascending: true }),
         supabase.from('letters').select('*').order('created_at', { ascending: true }),
       ]);
+      console.log('[RememberWe] memories fetch:', mems?.length ?? 0, 'rows', memErr ?? '');
+      console.log('[RememberWe] letters fetch:', lets?.length ?? 0, 'rows', letErr ?? '');
       if (!cancelled) {
-        setMemories((mems ?? []).map(rowToMemory));
+        try {
+          setMemories((mems ?? []).map(rowToMemory));
+        } catch (e) {
+          console.error('[RememberWe] rowToMemory error:', e);
+        }
         setLetters((lets ?? []).map(rowToLetter));
         setLoading(false);
       }
