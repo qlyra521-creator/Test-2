@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Settings, Mail, Calendar, Sun, Moon } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { UserId, USER_NAMES, START_DATE } from '../types';
 import { daysBetween } from '../utils/dateUtils';
+import CalendarView from './CalendarView';
 
 const TODAY = new Date();
 const END_LABEL = `${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][TODAY.getMonth()]} ${TODAY.getFullYear()}`;
 
 export default function Navigation() {
   const { currentUser, setCurrentUser, theme, setTheme, currentView, setCurrentView } = useApp();
+  const [showCalendar, setShowCalendar] = useState(false);
 
   const totalDays = daysBetween(START_DATE, TODAY) + 1;
 
@@ -19,6 +21,7 @@ export default function Navigation() {
   });
 
   return (
+    <>
     <nav className="glass fixed top-0 left-0 right-0 z-40 px-6 py-3 flex items-center gap-4">
       {/* Logo */}
       <button
@@ -71,12 +74,15 @@ export default function Navigation() {
         {theme === 'purple' ? <Moon size={15} /> : <Sun size={15} />}
       </button>
 
-      {/* Calendar icon + date range */}
-      <div className="flex items-center gap-1.5 text-secondary text-xs hidden md:flex">
+      {/* Calendar icon + date range — clickable */}
+      <button
+        onClick={() => setShowCalendar(true)}
+        className="flex items-center gap-1.5 text-secondary text-xs hidden md:flex hover:text-primary transition-colors rounded-full px-2 py-1 hover:bg-white/20"
+      >
         <Calendar size={13} />
         <span className="font-light italic">Apr 2024 — {END_LABEL}</span>
         <span className="text-secondary/50">· 诗云 & Tim</span>
-      </div>
+      </button>
 
       {/* User avatars */}
       {(['shiyun', 'tim'] as UserId[]).map((id) => (
@@ -102,5 +108,7 @@ export default function Navigation() {
         <Settings size={15} />
       </button>
     </nav>
+    {showCalendar && <CalendarView onClose={() => setShowCalendar(false)} />}
+    </>
   );
 }
