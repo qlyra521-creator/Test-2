@@ -54,12 +54,20 @@ export default function CalendarView({ onClose }: Props) {
   return (
     <div className="modal-overlay" style={{ zIndex: 200 }} onClick={onClose}>
       <div
-        className="glass-card w-full max-w-sm animate-slide-up flex flex-col overflow-hidden"
-        style={{ maxHeight: '88vh' }}
+        className="w-full max-w-sm animate-slide-up flex flex-col overflow-hidden"
+        style={{
+          maxHeight: '88vh',
+          background: 'rgba(255, 251, 247, 0.96)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          borderRadius: 20,
+          border: '1px solid rgba(255, 255, 255, 0.8)',
+          boxShadow: '0 8px 40px rgba(80, 60, 100, 0.12)',
+        }}
         onClick={e => e.stopPropagation()}
       >
         {/* Month navigation header */}
-        <div className="flex items-center px-5 py-4 border-b border-white/20">
+        <div className="flex items-center px-5 py-4" style={{ borderBottom: '1px solid rgba(200, 190, 210, 0.2)' }}>
           <button
             onClick={prevMonth}
             disabled={!canPrev}
@@ -115,11 +123,14 @@ export default function CalendarView({ onClose }: Props) {
                 disabled={!hasMem}
                 className={`aspect-square flex flex-col items-center justify-center rounded-xl transition-all ${
                   isSelected
-                    ? 'bg-white/45 shadow-sm'
+                    ? 'shadow-sm cursor-pointer'
                     : hasMem
-                    ? 'hover:bg-white/25 cursor-pointer'
+                    ? 'cursor-pointer'
                     : 'cursor-default'
                 }`}
+                style={isSelected ? { background: 'rgba(210, 195, 225, 0.35)' } : undefined}
+                onMouseEnter={e => { if (hasMem && !isSelected) (e.currentTarget as HTMLElement).style.background = 'rgba(210, 195, 225, 0.2)'; }}
+                onMouseLeave={e => { if (!isSelected) (e.currentTarget as HTMLElement).style.background = ''; }}
               >
                 {isToday ? (
                   <span
@@ -158,13 +169,13 @@ export default function CalendarView({ onClose }: Props) {
 
         {/* Selected day detail panel */}
         {selectedDate && selectedMemories.length > 0 && (
-          <div className="border-t border-white/20 flex flex-col overflow-y-auto" style={{ maxHeight: 260 }}>
-            <div className="px-4 pt-3 pb-1 text-xs text-secondary/50 uppercase tracking-wider">
+          <div className="flex flex-col overflow-y-auto" style={{ maxHeight: 260, borderTop: '1px solid rgba(200, 190, 210, 0.25)' }}>
+            <div className="px-4 pt-3 pb-1 text-xs uppercase tracking-wider" style={{ color: 'rgba(122, 110, 130, 0.5)' }}>
               {selectedDate}
             </div>
             <div className="px-4 pb-4 flex flex-col gap-2.5">
               {selectedMemories.map(m => (
-                <div key={m.id} className="glass rounded-xl p-3.5">
+                <div key={m.id} className="rounded-xl p-3.5" style={{ background: 'rgba(240, 232, 245, 0.45)', border: '1px solid rgba(220, 210, 230, 0.4)' }}>
                   <div className="flex items-start gap-2.5">
                     <span
                       className="w-2 h-2 rounded-full mt-1.5 shrink-0"
