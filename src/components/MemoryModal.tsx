@@ -144,19 +144,33 @@ export default function MemoryModal({ dot, onClose, onAddMemory, onPrev, onNext 
               </span>
             )}
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {canEdit && (
-              <button onClick={handleDelete} className="text-secondary hover:text-red-400 transition-colors">
-                <Trash2 size={15} />
+              <button
+                onClick={handleDelete}
+                className="w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                style={{ background: 'rgba(220,100,100,0.12)', color: 'rgba(190,70,70,0.85)' }}
+                title="删除"
+              >
+                <Trash2 size={14} />
               </button>
             )}
             {canEdit && (
-              <button onClick={() => setShowEdit(true)} className="text-secondary hover:text-primary transition-colors" title="编辑记忆">
-                <Edit2 size={15} />
+              <button
+                onClick={() => setShowEdit(true)}
+                className="w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                style={{ background: 'rgba(125,175,200,0.18)', color: 'rgba(80,130,160,0.9)' }}
+                title="编辑记忆"
+              >
+                <Edit2 size={14} />
               </button>
             )}
-            <button onClick={onClose} className="text-secondary hover:text-primary transition-colors">
-              <X size={17} />
+            <button
+              onClick={onClose}
+              className="w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110"
+              style={{ background: 'rgba(150,140,160,0.15)', color: 'rgba(100,90,110,0.85)' }}
+            >
+              <X size={15} />
             </button>
           </div>
         </div>
