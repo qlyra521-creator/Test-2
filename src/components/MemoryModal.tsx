@@ -24,9 +24,11 @@ interface Props {
   dot: DotInfo;
   onClose: () => void;
   onAddMemory: () => void;
+  onPrev?: () => void;
+  onNext?: () => void;
 }
 
-export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
+export default function MemoryModal({ dot, onClose, onAddMemory, onPrev, onNext }: Props) {
   const { currentUser, deleteMemory, memories, viewMode } = useApp();
   const [memIdx, setMemIdx] = useState(0);
   const [photoIdx, setPhotoIdx] = useState(0);
@@ -91,6 +93,26 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
   return (
     <>
     <div className="modal-overlay" onClick={onClose}>
+      {/* Prev button */}
+      {onPrev && (
+        <button
+          onClick={e => { e.stopPropagation(); onPrev(); }}
+          className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-white/20 transition-all z-10"
+          style={{ background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(8px)' }}
+        >
+          <ChevronLeft size={22} />
+        </button>
+      )}
+      {/* Next button */}
+      {onNext && (
+        <button
+          onClick={e => { e.stopPropagation(); onNext(); }}
+          className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-white/20 transition-all z-10"
+          style={{ background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(8px)' }}
+        >
+          <ChevronRight size={22} />
+        </button>
+      )}
       <div
         className="w-full max-w-3xl overflow-hidden animate-slide-up"
         style={{

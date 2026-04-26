@@ -383,16 +383,25 @@ export default function StarGrid() {
       )}
 
       {/* Modals */}
-      {selectedDot && (
-        <MemoryModal
-          dot={selectedDot}
-          onClose={() => setSelectedDot(null)}
-          onAddMemory={() => {
-            setAddDate(selectedDot.dateStr);
-            setSelectedDot(null);
-          }}
-        />
-      )}
+      {selectedDot && (() => {
+        const memDots = dots.filter(d => d.memories.length > 0 && !d.isFuture && !d.isBeforeStart)
+          .sort((a, b) => a.dateStr.localeCompare(b.dateStr));
+        const idx = memDots.findIndex(d => d.dateStr === selectedDot.dateStr);
+        const prevDot = idx > 0 ? memDots[idx - 1] : undefined;
+        const nextDot = idx < memDots.length - 1 ? memDots[idx + 1] : undefined;
+        return (
+          <MemoryModal
+            dot={selectedDot}
+            onClose={() => setSelectedDot(null)}
+            onAddMemory={() => {
+              setAddDate(selectedDot.dateStr);
+              setSelectedDot(null);
+            }}
+            onPrev={prevDot ? () => setSelectedDot(prevDot) : undefined}
+            onNext={nextDot ? () => setSelectedDot(nextDot) : undefined}
+          />
+        );
+      })()}
       {addDate && (
         <AddMemoryModal
           defaultDate={addDate}
