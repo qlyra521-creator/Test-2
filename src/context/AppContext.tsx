@@ -121,7 +121,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       try {
         const [{ data: mems, error: memErr }, { data: lets, error: letErr }] = await Promise.race([
           Promise.all([
-            supabase.from('memories').select('id,date,author,type,title,content,location,day_of_journey'),
+            supabase.from('memories').select('id,date,author,type,title,content,location,day_of_journey,photos,voice_note'),
             supabase.from('letters').select('*'),
           ]),
           timeout,
