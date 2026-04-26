@@ -144,46 +144,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return () => { cancelled = true; };
   }, []);
 
-  useEffect(() => {
-    const memoriesChannel = supabase
-      .channel('memories-changes')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'memories' }, payload => {
-        setMemories(prev => {
-          if (prev.find(m => m.id === (payload.new as Record<string, unknown>).id)) return prev;
-          return [...prev, rowToMemory(payload.new as Record<string, unknown>)].sort((a, b) => a.date.localeCompare(b.date));
-        });
-      })
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'memories' }, payload => {
-        setMemories(prev => prev.map(m =>
-          m.id === (payload.new as Record<string, unknown>).id ? rowToMemory(payload.new as Record<string, unknown>) : m
-        ));
-      })
-      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'memories' }, payload => {
-        setMemories(prev => prev.filter(m => m.id !== (payload.old as Record<string, unknown>).id));
-      })
-      .subscribe();
-
-    const lettersChannel = supabase
-      .channel('letters-changes')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'letters' }, payload => {
-        setLetters(prev => {
-          if (prev.find(l => l.id === (payload.new as Record<string, unknown>).id)) return prev;
-          return [...prev, rowToLetter(payload.new as Record<string, unknown>)];
-        });
-      })
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'letters' }, payload => {
-        setLetters(prev => prev.map(l =>
-          l.id === (payload.new as Record<string, unknown>).id ? rowToLetter(payload.new as Record<string, unknown>) : l
-        ));
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(memoriesChannel);
-      supabase.removeChannel(lettersChannel);
-    };
-  }, []);
-
   const setCurrentUser = useCallback((u: UserId | null) => {
     setCurrentUserState(u);
     localStorage.setItem('rm_user', JSON.stringify(u));
