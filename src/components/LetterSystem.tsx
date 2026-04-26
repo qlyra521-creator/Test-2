@@ -197,7 +197,7 @@ function ComposeView({ onSent, onCancel }: { onSent: () => void; onCancel: () =>
 }
 
 export default function LetterSystem() {
-  const { currentUser, letters, markLetterRead } = useApp();
+  const { currentUser, letters, markLetterRead, setCurrentView } = useApp();
   const [tab, setTab] = useState<Tab>('inbox');
 
   if (!currentUser) return null;
@@ -318,6 +318,16 @@ export default function LetterSystem() {
       ) : (
         <ComposeView onSent={() => setTab('inbox')} onCancel={() => setTab('inbox')} />
       )}
+
+      {/* Back to home */}
+      <div className="mt-8 flex justify-center">
+        <button
+          onClick={() => setCurrentView('grid')}
+          className="glass rounded-full px-5 py-2 text-sm text-secondary hover:text-primary transition-colors tracking-wider"
+        >
+          ← 返回主页 · Home
+        </button>
+      </div>
     </div>
   );
 }
