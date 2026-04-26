@@ -166,14 +166,14 @@ export default function SurpriseModal({ memories, onClose }: Props) {
                     </div>
                   )}
                   {memory.photos && memory.photos.length > 0 && (
-                    <div className="flex gap-1.5 mt-3 overflow-hidden">
-                      {memory.photos.slice(0, 3).map((src, i) => (
+                    <div className={`mt-3 ${memory.photos.length > 1 ? 'grid grid-cols-2 gap-1.5' : ''}`}>
+                      {memory.photos.slice(0, 4).map((src, i) => (
                         <img
                           key={i}
                           src={src}
                           alt=""
-                          className="rounded-lg object-cover"
-                          style={{ width: memory.photos.length === 1 ? '100%' : 80, height: 72, flexShrink: 0 }}
+                          className="rounded-lg w-full"
+                          style={{ objectFit: 'contain', maxHeight: memory.photos.length === 1 ? 220 : 110, background: 'rgba(0,0,0,0.03)' }}
                         />
                       ))}
                     </div>
