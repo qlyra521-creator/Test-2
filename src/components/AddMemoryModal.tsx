@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { X, Camera, Mic, MicOff, MapPin, Map } from 'lucide-react';
 import MapPicker from './MapPicker';
+import ImageCropModal from './ImageCropModal';
 import { useApp } from '../context/AppContext';
 import { Memory, MemoryType, MEMORY_COLORS, MEMORY_LABELS } from '../types';
 import { dayOfJourney, toDateStr } from '../utils/dateUtils';
@@ -26,6 +27,8 @@ export default function AddMemoryModal({ defaultDate, onClose, editMemory }: Pro
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [saving, setSaving] = useState(false);
   const [showMap, setShowMap] = useState(false);
+  const [cropQueue, setCropQueue] = useState<string[]>([]);
+  const [cropTarget, setCropTarget] = useState<string | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -37,10 +40,17 @@ export default function AddMemoryModal({ defaultDate, onClose, editMemory }: Pro
   const handlePhotoSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
+    const newSrcs: string[] = [];
+    let loaded = 0;
     Array.from(files).forEach(file => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPhotos(prev => [...prev, reader.result as string]);
+        newSrcs.push(reader.result as string);
+        loaded++;
+        if (loaded === files.length) {
+          setCropQueue(newSrcs.slice(1));
+          setCropTarget(newSrcs[0]);
+        }
       };
       reader.readAsDataURL(file);
     });
@@ -305,6 +315,24 @@ export default function AddMemoryModal({ defaultDate, onClose, editMemory }: Pro
         <MapPicker
           onSelect={name => setLocation(name)}
           onClose={() => setShowMap(false)}
+        />
+      )}
+
+      {cropTarget && (
+        <ImageCropModal
+          src={cropTarget}
+          onDone={cropped => {
+            setPhotos(prev => [...prev, cropped]);
+            const [next, ...rest] = cropQueue;
+            setCropTarget(next ?? null);
+            setCropQueue(rest);
+          }}
+          onCancel={() => {
+            // Skip this image, continue with queue
+            const [next, ...rest] = cropQueue;
+            setCropTarget(next ?? null);
+            setCropQueue(rest);
+          }}
         />
       )}
     </div>
