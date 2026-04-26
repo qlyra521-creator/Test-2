@@ -12,8 +12,8 @@ export default function UserSelector() {
   const daysToAnniversary = daysBetween(today, ANNIVERSARY_DATE);
 
   const profiles: { id: UserId; name: string; nameZh: string; desc: string }[] = [
-    { id: 'shiyun', name: '诗云', nameZh: 'Shiyun', desc: '继续我们的旅程 · Continue our journey' },
-    { id: 'tim', name: 'Tim', nameZh: 'Tim', desc: '继续我们的旅程 · Continue our journey' },
+    { id: 'shiyun', name: '诗云', nameZh: 'Shiyun', desc: 'Continue our journey' },
+    { id: 'tim', name: 'Tim', nameZh: 'Tim', desc: 'Continue our journey' },
   ];
 
   return (
@@ -96,7 +96,7 @@ export default function UserSelector() {
                   : 'linear-gradient(135deg, #7DAFC8, #9AACAA)',
               }}
             >
-              进入 Enter →
+              Enter →
             </div>
           </button>
         ))}
