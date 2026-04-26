@@ -193,9 +193,71 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
                 )}
               </>
             ) : (
-              <div className="flex flex-col items-center gap-2 text-white/30 p-8">
-                <div className="text-4xl">✦</div>
-                <div className="text-xs">无图片 · No photo</div>
+              <div className="flex items-center justify-center w-full h-full" style={{ minHeight: 220 }}>
+                <svg viewBox="0 0 200 170" width="190" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  style={{ strokeLinecap: 'round', strokeLinejoin: 'round' }}>
+
+                  {/* Speech bubble */}
+                  <rect x="48" y="4" width="104" height="26" rx="9"
+                    fill="white" fillOpacity="0.55"
+                    stroke={bg.border.replace('0.3)', '0.7)')} strokeWidth="1.2"/>
+                  <path d="M96 30 L100 38 L104 30"
+                    fill="white" fillOpacity="0.55"
+                    stroke={bg.border.replace('0.3)', '0.7)')} strokeWidth="1.2"/>
+                  <text x="100" y="21" textAnchor="middle"
+                    style={{ fontSize: 8.5, fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic' }}
+                    fill={bg.border.replace('0.3)', '0.85)')}>
+                    Add some photos~
+                  </text>
+
+                  {/* ── Dog 1 (left, pointy ears) ── */}
+                  {/* Body */}
+                  <ellipse cx="65" cy="118" rx="21" ry="15" stroke={bg.border.replace('0.3)', '0.7)')} strokeWidth="1.8"/>
+                  {/* Head */}
+                  <circle cx="65" cy="84" r="15" stroke={bg.border.replace('0.3)', '0.7)')} strokeWidth="1.8"/>
+                  {/* Left ear */}
+                  <path d="M55 72 L49 55 L63 70" stroke={bg.border.replace('0.3)', '0.7)')} strokeWidth="1.8"/>
+                  {/* Right ear */}
+                  <path d="M75 72 L81 55 L67 70" stroke={bg.border.replace('0.3)', '0.7)')} strokeWidth="1.8"/>
+                  {/* Eyes */}
+                  <circle cx="59" cy="83" r="2.3" fill={bg.border.replace('0.3)', '0.7)')}/>
+                  <circle cx="71" cy="83" r="2.3" fill={bg.border.replace('0.3)', '0.7)')}/>
+                  {/* Nose */}
+                  <ellipse cx="65" cy="89" rx="2.8" ry="1.8" fill={bg.border.replace('0.3)', '0.5)')}/>
+                  {/* Smile */}
+                  <path d="M60 93 Q65 97 70 93" stroke={bg.border.replace('0.3)', '0.7)')} strokeWidth="1.5"/>
+                  {/* Tail (curly right) */}
+                  <path d="M86 113 Q102 100 95 120 Q90 128 83 120" stroke={bg.border.replace('0.3)', '0.7)')} strokeWidth="1.8"/>
+                  {/* Paws */}
+                  <ellipse cx="54" cy="132" rx="6" ry="3" stroke={bg.border.replace('0.3)', '0.55)')} strokeWidth="1.4"/>
+                  <ellipse cx="72" cy="132" rx="6" ry="3" stroke={bg.border.replace('0.3)', '0.55)')} strokeWidth="1.4"/>
+
+                  {/* ── Dog 2 (right, floppy ears, squint eyes) ── */}
+                  {/* Body */}
+                  <ellipse cx="138" cy="118" rx="21" ry="15" stroke={bg.border.replace('0.3)', '0.7)')} strokeWidth="1.8"/>
+                  {/* Head */}
+                  <circle cx="138" cy="84" r="15" stroke={bg.border.replace('0.3)', '0.7)')} strokeWidth="1.8"/>
+                  {/* Left floppy ear */}
+                  <path d="M126 76 Q115 62 121 78" stroke={bg.border.replace('0.3)', '0.7)')} strokeWidth="2.3"/>
+                  {/* Right floppy ear */}
+                  <path d="M150 76 Q161 62 155 78" stroke={bg.border.replace('0.3)', '0.7)')} strokeWidth="2.3"/>
+                  {/* Happy squint eyes */}
+                  <path d="M130 82 Q133 78 137 82" stroke={bg.border.replace('0.3)', '0.7)')} strokeWidth="1.9"/>
+                  <path d="M139 82 Q142 78 146 82" stroke={bg.border.replace('0.3)', '0.7)')} strokeWidth="1.9"/>
+                  {/* Nose */}
+                  <ellipse cx="138" cy="89" rx="2.8" ry="1.8" fill={bg.border.replace('0.3)', '0.5)')}/>
+                  {/* Big smile */}
+                  <path d="M132 93 Q138 99 144 93" stroke={bg.border.replace('0.3)', '0.7)')} strokeWidth="1.5"/>
+                  {/* Tail */}
+                  <path d="M159 113 Q175 100 168 120 Q163 128 156 120" stroke={bg.border.replace('0.3)', '0.7)')} strokeWidth="1.8"/>
+                  {/* Paws */}
+                  <ellipse cx="127" cy="132" rx="6" ry="3" stroke={bg.border.replace('0.3)', '0.55)')} strokeWidth="1.4"/>
+                  <ellipse cx="145" cy="132" rx="6" ry="3" stroke={bg.border.replace('0.3)', '0.55)')} strokeWidth="1.4"/>
+
+                  {/* Little hearts between them */}
+                  <path d="M100 105 Q101 103 103 103 Q105 103 105 105 Q105 107 103 109 Q101 107 99 105 Q99 103 101 103 Q103 103 103 105"
+                    fill={bg.border.replace('0.3)', '0.4)')} stroke="none"/>
+                </svg>
               </div>
             )}
           </div>
