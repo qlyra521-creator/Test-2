@@ -76,10 +76,10 @@ export default function Navigation() {
       {/* Calendar — desktop only */}
       <button
         onClick={() => setShowCalendar(true)}
-        className="items-center gap-1.5 text-secondary text-xs hidden md:flex hover:text-primary transition-colors rounded-full px-2 py-1 hover:bg-white/20"
+        className="flex items-center gap-1.5 text-secondary text-xs hover:text-primary transition-colors rounded-full px-2 py-1 hover:bg-white/20"
       >
         <Calendar size={13} />
-        <span className="font-light italic">Apr 2024 — {END_LABEL}</span>
+        <span className="font-light italic hidden md:inline">Apr 2024 — {END_LABEL}</span>
       </button>
 
       {/* User avatars */}
