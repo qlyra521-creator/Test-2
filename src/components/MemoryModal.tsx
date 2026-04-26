@@ -156,7 +156,7 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
           </div>
 
           {/* Middle: Photo */}
-          <div className="relative flex items-center justify-center overflow-hidden p-4" style={{ background: bg.mid }}>
+          <div className="relative flex items-center justify-center overflow-hidden p-4">
             {memory.photos.length > 0 ? (
               <div className="relative w-full h-full rounded-2xl overflow-hidden" style={{ minHeight: 220 }}>
                 <img
