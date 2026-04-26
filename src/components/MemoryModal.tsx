@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { X, Edit2, Trash2, ChevronLeft, ChevronRight, Volume2, MapPin } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { Memory, MemoryType, MEMORY_COLORS, MEMORY_LABELS, USER_NAMES } from '../types';
@@ -27,14 +27,28 @@ interface Props {
 }
 
 export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
-  const { currentUser, deleteMemory } = useApp();
+  const { currentUser, deleteMemory, memories, viewMode } = useApp();
   const [memIdx, setMemIdx] = useState(0);
   const [photoIdx, setPhotoIdx] = useState(0);
   const [audioEl, setAudioEl] = useState<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
 
-  const memory = dot.memories[memIdx];
+  // Always read fresh memories from context so edits are reflected immediately
+  const liveMemories = useMemo(() => {
+    const forDate = memories.filter(m => m.date === dot.dateStr);
+    if (!currentUser || viewMode === 'merged') return forDate;
+    if (viewMode === 'mine') return forDate.filter(m => m.author === currentUser);
+    return forDate.filter(m => m.author !== currentUser);
+  }, [memories, dot.dateStr, currentUser, viewMode]);
+
+  // Clamp index if memories shrink after a delete
+  useEffect(() => {
+    if (liveMemories.length === 0) { onClose(); return; }
+    if (memIdx >= liveMemories.length) setMemIdx(liveMemories.length - 1);
+  }, [liveMemories.length]);
+
+  const memory = liveMemories[memIdx];
   if (!memory) return null;
 
   const canEdit = currentUser === memory.author;
@@ -46,7 +60,7 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
   const handleDelete = () => {
     if (confirm('确定要删除这条记忆吗？')) {
       deleteMemory(memory.id);
-      if (dot.memories.length <= 1) {
+      if (liveMemories.length <= 1) {
         onClose();
       } else {
         setMemIdx(Math.max(0, memIdx - 1));
@@ -92,7 +106,7 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: `1px solid ${bg.border}` }}>
           <div className="flex items-center gap-3">
-            {dot.memories.length > 1 && dot.memories.map((_, i) => (
+            {liveMemories.length > 1 && liveMemories.map((_, i) => (
               <button
                 key={i}
                 onClick={() => { setMemIdx(i); setPhotoIdx(0); }}
@@ -101,9 +115,9 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
                 }`}
               />
             ))}
-            {dot.memories.length > 1 && (
+            {liveMemories.length > 1 && (
               <span className="text-xs text-secondary ml-1">
-                {memIdx + 1} / {dot.memories.length}
+                {memIdx + 1} / {liveMemories.length}
               </span>
             )}
           </div>
