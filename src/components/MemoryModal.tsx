@@ -29,12 +29,14 @@ interface Props {
 }
 
 export default function MemoryModal({ dot, onClose, onAddMemory, onPrev, onNext }: Props) {
-  const { currentUser, deleteMemory, memories, viewMode } = useApp();
+  const { currentUser, deleteMemory, memories, viewMode, fetchMemoryMedia } = useApp();
   const [memIdx, setMemIdx] = useState(0);
   const [photoIdx, setPhotoIdx] = useState(0);
   const [audioEl, setAudioEl] = useState<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const [livePhotos, setLivePhotos] = useState<string[]>([]);
+  const [liveVoiceNote, setLiveVoiceNote] = useState<string | undefined>(undefined);
 
   // Always read fresh memories from context so edits are reflected immediately
   const liveMemories = useMemo(() => {
@@ -51,6 +53,26 @@ export default function MemoryModal({ dot, onClose, onAddMemory, onPrev, onNext 
   }, [liveMemories.length]);
 
   const memory = liveMemories[memIdx];
+
+  // Fetch photos/voice on demand (not loaded in initial list query)
+  useEffect(() => {
+    if (!memory) return;
+    if (livePhotos.length > 0) {
+      setLivePhotos(livePhotos);
+      setLiveVoiceNote(liveVoiceNote);
+    } else {
+      setLivePhotos([]);
+      setLiveVoiceNote(undefined);
+      fetchMemoryMedia(memory.id).then(({ photos, voiceNote }) => {
+        setLivePhotos(photos);
+        setLiveVoiceNote(voiceNote);
+      });
+    }
+    setPhotoIdx(0);
+    setAudioEl(null);
+    setPlaying(false);
+  }, [memory?.id]);
+
   if (!memory) return null;
 
   const canEdit = currentUser === memory.author;
@@ -71,9 +93,9 @@ export default function MemoryModal({ dot, onClose, onAddMemory, onPrev, onNext 
   };
 
   const togglePlay = () => {
-    if (!memory.voiceNote) return;
+    if (!liveVoiceNote) return;
     if (!audioEl) {
-      const el = new Audio(memory.voiceNote);
+      const el = new Audio(liveVoiceNote);
       el.onended = () => setPlaying(false);
       el.play();
       setAudioEl(el);
@@ -183,7 +205,7 @@ export default function MemoryModal({ dot, onClose, onAddMemory, onPrev, onNext 
             .mem-photo{aspect-ratio:auto!important;height:100%;min-height:220px;}
           }
         `}</style>
-        <div className={`grid gap-0 ${memory.photos.length > 0 ? 'grid-cols-2 sm:grid-cols-3' : 'grid-cols-2'}`}>
+        <div className={`grid gap-0 ${livePhotos.length > 0 ? 'grid-cols-2 sm:grid-cols-3' : 'grid-cols-2'}`}>
           {/* Left: Date & stats */}
           <div className="mem-left p-4 flex flex-col gap-3" style={{ borderTop: `1px solid ${bg.border}` }}>
 
@@ -218,15 +240,15 @@ export default function MemoryModal({ dot, onClose, onAddMemory, onPrev, onNext 
           </div>
 
           {/* Middle: Photo — only rendered when photos exist */}
-          {memory.photos.length > 0 && (
+          {livePhotos.length > 0 && (
             <div className="relative overflow-hidden p-3 col-span-2 sm:col-span-1 order-first sm:order-none">
               <div className="mem-photo relative w-full rounded-2xl overflow-hidden" style={{ aspectRatio: '16/10' }}>
                 <img
-                  src={memory.photos[photoIdx]}
+                  src={livePhotos[photoIdx]}
                   alt="memory"
                   className="w-full h-full object-cover"
                 />
-                {memory.photos.length > 1 && (
+                {livePhotos.length > 1 && (
                   <>
                     <button
                       onClick={() => setPhotoIdx(i => Math.max(0, i - 1))}
@@ -235,13 +257,13 @@ export default function MemoryModal({ dot, onClose, onAddMemory, onPrev, onNext 
                       <ChevronLeft size={14} />
                     </button>
                     <button
-                      onClick={() => setPhotoIdx(i => Math.min(memory.photos.length - 1, i + 1))}
+                      onClick={() => setPhotoIdx(i => Math.min(livePhotos.length - 1, i + 1))}
                       className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-black/30 rounded-full flex items-center justify-center text-white"
                     >
                       <ChevronRight size={14} />
                     </button>
                     <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
-                      {memory.photos.map((_, i) => (
+                      {livePhotos.map((_, i) => (
                         <button
                           key={i}
                           onClick={() => setPhotoIdx(i)}
@@ -271,7 +293,7 @@ export default function MemoryModal({ dot, onClose, onAddMemory, onPrev, onNext 
             </div>
 
             {/* No-photo prompt — small, at bottom */}
-            {memory.photos.length === 0 && (
+            {livePhotos.length === 0 && (
               <div className="rounded-2xl p-3 flex items-center gap-3" style={{ background: 'rgba(255,255,255,0.52)' }}>
                 <img src="/dog.png" alt="dogs" className="w-20 h-auto" />
                 <span className="text-xs text-secondary/50 italic leading-relaxed">Add some photos~</span>
@@ -284,7 +306,7 @@ export default function MemoryModal({ dot, onClose, onAddMemory, onPrev, onNext 
             </div>
 
             {/* Voice note block */}
-            {memory.voiceNote && (
+            {liveVoiceNote && (
               <div className="rounded-2xl p-4 flex flex-col items-center gap-2" style={{ background: 'rgba(255,255,255,0.52)' }}>
                 <button
                   onClick={togglePlay}

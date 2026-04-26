@@ -19,6 +19,7 @@ interface AppContextType {
   addLetter: (l: Letter) => void;
   markLetterRead: (id: string) => void;
   loading: boolean;
+  fetchMemoryMedia: (id: string) => Promise<{ photos: string[]; voiceNote?: string }>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -107,7 +108,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     let cancelled = false;
     async function fetchData() {
       const [{ data: mems }, { data: lets }] = await Promise.all([
-        supabase.from('memories').select('*'),
+        supabase.from('memories').select('id,date,author,type,title,content,location,day_of_journey'),
         supabase.from('letters').select('*'),
       ]);
       if (!cancelled) {
@@ -197,6 +198,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     await supabase.from('letters').update({ is_read: true }).eq('id', id);
   }, []);
 
+  const fetchMemoryMedia = useCallback(async (id: string) => {
+    const { data } = await supabase
+      .from('memories')
+      .select('photos,voice_note')
+      .eq('id', id)
+      .single();
+    return {
+      photos: (data?.photos as string[]) ?? [],
+      voiceNote: (data?.voice_note as string) ?? undefined,
+    };
+  }, []);
+
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
@@ -209,7 +222,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       currentView, setCurrentView,
       memories, addMemory, updateMemory, deleteMemory,
       letters, addLetter, markLetterRead,
-      loading,
+      loading, fetchMemoryMedia,
     }}>
       {children}
     </AppContext.Provider>
