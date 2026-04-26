@@ -316,10 +316,19 @@ export default function StarGrid() {
         </div>
 
         {/* Tooltip */}
-        {tooltip && (
+        {tooltip && (() => {
+          const mems = tooltip.dot.memories;
+          const primaryType = mems.length > 0 ? getPrimaryType(mems) : null;
+          const typeColor = primaryType ? MEMORY_COLORS[primaryType] : null;
+          return (
           <div
             className="dot-tooltip"
-            style={{ left: tooltip.x, top: tooltip.y - 8 }}
+            style={{
+              left: tooltip.x,
+              top: tooltip.y - 8,
+              background: typeColor ? `${typeColor}22` : 'rgba(255,255,255,0.92)',
+              borderColor: typeColor ? `${typeColor}55` : 'rgba(255,255,255,0.6)',
+            }}
           >
             <div className="font-medium text-xs mb-0.5">{tooltip.dot.dateStr}</div>
             {tooltip.dot.dayOfJourney && (
@@ -348,7 +357,8 @@ export default function StarGrid() {
               <div className="text-secondary" style={{ fontSize: 11 }}>点击添加记忆 · Click to add</div>
             )}
           </div>
-        )}
+          );
+        })()}
       </div>
 
       {/* Stats bar */}
