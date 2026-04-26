@@ -143,8 +143,8 @@ export default function MapPicker({ onSelect, onClose }: Props) {
   return (
     <div className="modal-overlay" style={{ zIndex: 200 }} onClick={onClose}>
       <div
-        className="glass-card w-full max-w-lg animate-slide-up flex flex-col overflow-hidden"
-        style={{ height: '80vh', maxHeight: 580 }}
+        className="glass-card w-full max-w-lg animate-slide-up flex flex-col"
+        style={{ height: '80vh', maxHeight: 580, overflow: 'visible' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
@@ -197,7 +197,7 @@ export default function MapPicker({ onSelect, onClose }: Props) {
         </div>
 
         {/* Map */}
-        <div className="relative flex-1" onClick={() => setShowSuggestions(false)}>
+        <div className="relative flex-1" style={{ overflow: 'hidden' }} onClick={() => setShowSuggestions(false)}>
           <div ref={mapContainerRef} className="w-full h-full" />
           {reversing && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
