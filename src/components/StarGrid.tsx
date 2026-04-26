@@ -6,6 +6,14 @@ import { generateMonthGroups, MonthGroup, toDateStr, daysBetween } from '../util
 import MemoryModal from './MemoryModal';
 import AddMemoryModal from './AddMemoryModal';
 
+const TOOLTIP_BG: Record<MemoryType, { bg: string; border: string }> = {
+  daily:       { bg: 'rgb(238, 225, 195)', border: 'rgba(200, 182, 145, 0.5)' },
+  travel:      { bg: 'rgb(195, 220, 235)', border: 'rgba(145, 178, 205, 0.5)' },
+  anniversary: { bg: 'rgb(232, 208, 222)', border: 'rgba(190, 155, 180, 0.5)' },
+  special:     { bg: 'rgb(238, 215, 200)', border: 'rgba(200, 165, 145, 0.5)' },
+  note:        { bg: 'rgb(200, 220, 215)', border: 'rgba(148, 182, 175, 0.5)' },
+};
+
 // Grid layout constants
 const MONTH_SLOT_W = 70;
 const DAY_H = 8;
@@ -319,15 +327,15 @@ export default function StarGrid() {
         {tooltip && (() => {
           const mems = tooltip.dot.memories;
           const primaryType = mems.length > 0 ? getPrimaryType(mems) : null;
-          const typeColor = primaryType ? MEMORY_COLORS[primaryType] : null;
+          const tooltipStyle = primaryType ? TOOLTIP_BG[primaryType] : null;
           return (
           <div
             className="dot-tooltip"
             style={{
               left: tooltip.x,
               top: tooltip.y - 8,
-              background: typeColor ? `${typeColor}22` : 'rgba(255,255,255,0.92)',
-              borderColor: typeColor ? `${typeColor}55` : 'rgba(255,255,255,0.6)',
+              background: tooltipStyle ? tooltipStyle.bg : 'rgb(245, 242, 248)',
+              borderColor: tooltipStyle ? tooltipStyle.border : 'rgba(200,190,210,0.4)',
             }}
           >
             <div className="font-medium text-xs mb-0.5">{tooltip.dot.dateStr}</div>
