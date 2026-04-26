@@ -62,12 +62,12 @@ export default function UserSelector() {
       <div className="glass-card px-8 py-5 mb-10 text-center animate-fade-in" style={{ animationDelay: '0.1s' }}>
         <div className="flex gap-12 items-center">
           <div>
-            <div className="font-serif text-4xl font-light text-primary">{totalDays}</div>
+            <div className="font-serif text-4xl font-light" style={{ color: '#C97EA0' }}>{totalDays}</div>
             <div className="text-xs text-secondary mt-1 uppercase tracking-wider">在一起 · Days Together</div>
           </div>
           <div className="w-px h-10 bg-white/40" />
           <div>
-            <div className="font-serif text-4xl font-light text-primary">
+            <div className="font-serif text-4xl font-light" style={{ color: '#C8A96E' }}>
               {daysToAnniversary > 0 ? daysToAnniversary : '🎉'}
             </div>
             <div className="text-xs text-secondary mt-1 uppercase tracking-wider">
@@ -76,7 +76,7 @@ export default function UserSelector() {
           </div>
           <div className="w-px h-10 bg-white/40" />
           <div>
-            <div className="font-serif text-lg font-light text-primary">2024.04.29</div>
+            <div className="font-serif text-lg font-light" style={{ color: '#7DAFC8' }}>2024.04.29</div>
             <div className="text-xs text-secondary mt-1 uppercase tracking-wider">起始 · Since</div>
           </div>
         </div>
@@ -86,11 +86,16 @@ export default function UserSelector() {
       {!showProfiles && (
         <button
           onClick={() => setShowProfiles(true)}
-          className="mt-2 flex flex-col items-center gap-2 text-secondary/60 hover:text-secondary transition-colors animate-fade-in group"
+          className="mt-2 animate-fade-in group"
           style={{ animationDelay: '0.2s' }}
         >
-          <span className="text-xs tracking-widest uppercase">进入 · Enter</span>
-          <span className="text-lg animate-bounce">↓</span>
+          <div
+            className="flex items-center gap-3 px-8 py-3 rounded-full text-white text-sm tracking-widest uppercase transition-all hover:scale-105 hover:shadow-lg"
+            style={{ background: 'linear-gradient(135deg, rgba(201,126,160,0.7), rgba(125,175,200,0.7))', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.3)' }}
+          >
+            <span>进入 · Enter</span>
+            <span className="animate-bounce inline-block">↓</span>
+          </div>
         </button>
       )}
 
