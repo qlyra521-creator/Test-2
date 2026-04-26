@@ -196,8 +196,8 @@ export default function MapPicker({ onSelect, onClose }: Props) {
           )}
         </div>
 
-        {/* Map */}
-        <div className="relative flex-1" style={{ overflow: 'hidden' }} onClick={() => setShowSuggestions(false)}>
+        {/* Map — z-index: 0 creates a stacking context so Leaflet panes can't escape above the dropdown */}
+        <div className="relative flex-1" style={{ overflow: 'hidden', zIndex: 0 }} onClick={() => setShowSuggestions(false)}>
           <div ref={mapContainerRef} className="w-full h-full" />
           {reversing && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
