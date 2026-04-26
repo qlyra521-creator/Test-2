@@ -117,12 +117,20 @@ export default function AddMemoryModal({ defaultDate, onClose, editMemory }: Pro
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div
-        className="glass-card w-full max-w-xl animate-slide-up flex flex-col"
-        style={{ maxHeight: '90vh' }}
+        className="w-full max-w-xl animate-slide-up flex flex-col"
+        style={{
+          maxHeight: '90vh',
+          background: 'rgba(255, 251, 247, 0.97)',
+          backdropFilter: 'blur(28px)',
+          WebkitBackdropFilter: 'blur(28px)',
+          borderRadius: 18,
+          border: '1px solid rgba(255, 255, 255, 0.85)',
+          boxShadow: '0 8px 40px rgba(80, 60, 100, 0.13)',
+        }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/20">
+        <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: '1px solid rgba(200, 190, 210, 0.25)' }}>
           <h2 className="font-serif text-xl font-light text-primary">{editMemory ? '编辑记忆 · Edit Memory' : '记录这一天 · Record This Day'}</h2>
           <button onClick={onClose} className="text-secondary hover:text-primary transition-colors">
             <X size={17} />
