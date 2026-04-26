@@ -374,7 +374,7 @@ export default function StarGrid() {
       {currentUser && (
         <button
           onClick={() => setAddDate(toDateStr(new Date()))}
-          className="fixed bottom-32 right-4 sm:bottom-20 sm:right-8 w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform"
+          className="fixed bottom-32 right-4 sm:bottom-32 sm:right-8 w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform"
           style={{ background: 'linear-gradient(135deg, #C97EA0, #D4937A)' }}
           title="添加记忆"
         >
