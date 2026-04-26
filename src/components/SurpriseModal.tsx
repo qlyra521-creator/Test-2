@@ -4,8 +4,8 @@ import { Memory, MEMORY_COLORS, MEMORY_LABELS, USER_NAMES } from '../types';
 
 const QUOTES: { zh: string; en: string; from: string }[] = [
   {
-    zh: '于千万人之中遇见你所要遇见的人，没有早一步，也没有晚一步，刚巧赶上了——噢，你也在这里吗？',
-    en: 'Among thousands of people, in the endless wilderness of time, not a step too early, not a step too late — "Oh, you're here too?"',
+    zh: '于千万人之中遇见你所要遇见的人，没有早一步，也没有晚一步，刚巧赶上了——呀，你也在这里吗？',
+    en: 'Among thousands of people, in the endless wilderness of time, not a step too early, not a step too late — "Oh, you\'re here too?"',
     from: '张爱玲',
   },
   {
@@ -20,7 +20,7 @@ const QUOTES: { zh: string; en: string; from: string }[] = [
   },
   {
     zh: '世界上最遥远的距离，不是生与死，而是我站在你面前，你却不知道我爱你。',
-    en: 'The farthest distance in the world is not between life and death, but when I stand before you and you don't know I love you.',
+    en: 'The farthest distance in the world is not between life and death, but when I stand before you and you don\'t know I love you.',
     from: '泰戈尔',
   },
   {
@@ -34,18 +34,18 @@ const QUOTES: { zh: string; en: string; from: string }[] = [
     from: '李元胜',
   },
   {
-    zh: '那些消逝了的岁月，仿佛隔着一块积着灰尘的玻璃，看得到，抓不着。',
+    zh: '那些消逝了的岁月，价如隔着一块积着灿尘的玻璃，看得到，抓不着。',
     en: 'Those bygone years, as if seen through dusty glass — visible, but beyond reach.',
     from: '《花样年华》',
   },
   {
     zh: '如果神存在，我想他就住在我们之间这小小的空隙里。',
-    en: 'If there's any kind of God, it wouldn't be in any of us — but just this little space in between.',
+    en: 'If there\'s any kind of God, it wouldn\'t be in any of us — but just this little space in between.',
     from: '《Before Sunrise》',
   },
   {
     zh: '喜欢你，是我做过的最好的事。',
-    en: 'Liking you is the best thing I've ever done.',
+    en: 'Liking you is the best thing I\'ve ever done.',
     from: '佚名',
   },
   {
@@ -65,17 +65,17 @@ const QUOTES: { zh: string; en: string; from: string }[] = [
   },
   {
     zh: '余生很长，你别害怕。',
-    en: 'There's so much life left ahead — don't be afraid.',
+    en: 'There\'s so much life left ahead — don\'t be afraid.',
     from: '佚名',
-  },
-  {
-    zh: '陪你去看流星雨落在这地球上，让你的泪落在我肩膀。',
-    en: 'I'll take you to watch the meteor shower fall upon this earth, and let your tears fall on my shoulder.',
-    from: '《流星雨》',
   },
   {
     zh: '我们都是孤独的星球，某一天，轨道交叉，便是一生。',
     en: 'We are all lonely planets. One day our orbits cross — and that crossing becomes a lifetime.',
+    from: '佚名',
+  },
+  {
+    zh: '我想，如果我们在年轻的时候认识，应该更好吧。但是现在也不晚。',
+    en: 'I think, if we had met when we were young, it might have been even better. But it\'s not too late now.',
     from: '佚名',
   },
 ];
@@ -117,7 +117,7 @@ export default function SurpriseModal({ memories, onClose }: Props) {
         <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid rgba(200, 190, 210, 0.2)' }}>
           <div className="flex items-center gap-2">
             <span style={{ fontSize: 16 }}>🎁</span>
-            <span className="font-serif text-lg font-light text-primary">惊喜 · Surprise</span>
+            <span className="font-serif text-lg font-light text-primary">{'惊喜 · Surprise'}</span>
           </div>
           <button onClick={onClose} className="text-secondary hover:text-primary transition-colors p-1">
             <X size={15} />
