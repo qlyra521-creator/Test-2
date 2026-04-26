@@ -161,9 +161,17 @@ export default function MemoryModal({ dot, onClose, onAddMemory, onPrev, onNext 
         </div>
 
         {/* Body */}
-        <div className={`grid gap-0 min-h-64 ${memory.photos.length > 0 ? 'grid-cols-3' : 'grid-cols-2'}`}>
+        <style>{`
+          @media(min-width:640px){
+            .mem-left{border-right:1px solid ${bg.border}!important;border-top:none!important;}
+            .mem-right{border-left:1px solid ${bg.border}!important;border-top:none!important;}
+            .mem-photo{border-top:none!important;}
+          }
+        `}</style>
+        <div className={`flex flex-col sm:grid gap-0 ${memory.photos.length > 0 ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}>
           {/* Left: Date & stats */}
-          <div className="p-4 flex flex-col gap-3" style={{ borderRight: `1px solid ${bg.border}` }}>
+          <div className="mem-left p-4 flex flex-col gap-3 order-2 sm:order-1" style={{ borderTop: `1px solid ${bg.border}` }}>
+
             <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.52)' }}>
               <div className="font-serif italic text-3xl font-light text-primary leading-tight">
                 {monthName} {dayNum}
@@ -196,13 +204,12 @@ export default function MemoryModal({ dot, onClose, onAddMemory, onPrev, onNext 
 
           {/* Middle: Photo — only rendered when photos exist */}
           {memory.photos.length > 0 && (
-            <div className="relative flex items-center justify-center overflow-hidden p-4">
-              <div className="relative w-full h-full rounded-2xl overflow-hidden" style={{ minHeight: 220 }}>
+            <div className="relative flex items-center justify-center overflow-hidden p-4 order-1 sm:order-2">
+              <div className="mem-photo relative w-full rounded-2xl overflow-hidden" style={{ aspectRatio: '3/4', minHeight: 200 }}>
                 <img
                   src={memory.photos[photoIdx]}
                   alt="memory"
                   className="w-full h-full object-cover"
-                  style={{ minHeight: 220 }}
                 />
                 {memory.photos.length > 1 && (
                   <>
@@ -236,7 +243,7 @@ export default function MemoryModal({ dot, onClose, onAddMemory, onPrev, onNext 
           )}
 
           {/* Right: Notes & voice */}
-          <div className="p-4 flex flex-col gap-3" style={{ borderLeft: `1px solid ${bg.border}` }}>
+          <div className="mem-right p-4 flex flex-col gap-3 order-3" style={{ borderTop: `1px solid ${bg.border}` }}>
             {/* Notes block */}
             <div className="flex-1 rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.52)' }}>
               <div className="flex items-center gap-2 mb-2">
