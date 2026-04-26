@@ -84,7 +84,7 @@ function LetterCard({ letter, currentUser, onRead }: {
   );
 }
 
-function ComposeView({ onSent }: { onSent: () => void }) {
+function ComposeView({ onSent, onCancel }: { onSent: () => void; onCancel: () => void }) {
   const { currentUser, addLetter } = useApp();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -120,9 +120,14 @@ function ComposeView({ onSent }: { onSent: () => void }) {
 
   return (
     <div className="glass-card p-6 flex flex-col gap-5">
-      <div className="flex items-center gap-2 text-secondary text-sm">
-        <Send size={13} />
-        <span>写给 {USER_NAMES[partner]}</span>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-secondary text-sm">
+          <Send size={13} />
+          <span>写给 {USER_NAMES[partner]}</span>
+        </div>
+        <button onClick={onCancel} className="text-secondary hover:text-primary transition-colors">
+          <X size={16} />
+        </button>
       </div>
 
       {/* Title */}
@@ -311,7 +316,7 @@ export default function LetterSystem() {
           )}
         </div>
       ) : (
-        <ComposeView onSent={() => setTab('inbox')} />
+        <ComposeView onSent={() => setTab('inbox')} onCancel={() => setTab('inbox')} />
       )}
     </div>
   );
