@@ -1,8 +1,17 @@
 import React, { useState } from 'react';
 import { X, Edit2, Trash2, ChevronLeft, ChevronRight, Volume2, Plus, MapPin } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { Memory, MEMORY_COLORS, MEMORY_LABELS, USER_NAMES } from '../types';
+import { Memory, MemoryType, MEMORY_COLORS, MEMORY_LABELS, USER_NAMES } from '../types';
 import { formatDateEN } from '../utils/dateUtils';
+
+// Morandi-toned card backgrounds per type
+const TYPE_BG: Record<MemoryType, { card: string; mid: string; border: string }> = {
+  daily:       { card: 'rgba(238, 225, 195, 0.82)', mid: 'rgba(215, 200, 165, 0.35)', border: 'rgba(200, 182, 145, 0.3)' },
+  travel:      { card: 'rgba(195, 220, 235, 0.82)', mid: 'rgba(168, 198, 218, 0.35)', border: 'rgba(145, 178, 205, 0.3)' },
+  anniversary: { card: 'rgba(232, 208, 222, 0.82)', mid: 'rgba(210, 180, 200, 0.35)', border: 'rgba(190, 155, 180, 0.3)' },
+  special:     { card: 'rgba(238, 215, 200, 0.82)', mid: 'rgba(218, 188, 168, 0.35)', border: 'rgba(200, 165, 145, 0.3)' },
+  note:        { card: 'rgba(200, 220, 215, 0.82)', mid: 'rgba(172, 202, 196, 0.35)', border: 'rgba(148, 182, 175, 0.3)' },
+};
 
 interface DotInfo {
   dateStr: string;
@@ -61,15 +70,24 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
   };
 
   const typeColor = MEMORY_COLORS[memory.type];
+  const bg = TYPE_BG[memory.type];
 
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div
-        className="glass-card w-full max-w-3xl overflow-hidden animate-slide-up"
+        className="w-full max-w-3xl overflow-hidden animate-slide-up"
+        style={{
+          background: bg.card,
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          borderRadius: 18,
+          border: `1px solid ${bg.border}`,
+          boxShadow: '0 8px 40px rgba(60, 40, 80, 0.15)',
+        }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/20">
+        <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: `1px solid ${bg.border}` }}>
           <div className="flex items-center gap-3">
             {dot.memories.length > 1 && dot.memories.map((_, i) => (
               <button
@@ -104,7 +122,7 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
         {/* Body */}
         <div className="grid grid-cols-3 gap-0 min-h-64">
           {/* Left: Date & stats */}
-          <div className="p-6 border-r border-white/20 flex flex-col justify-between">
+          <div className="p-6 flex flex-col justify-between" style={{ borderRight: `1px solid ${bg.border}` }}>
             <div>
               <div className="font-serif italic text-3xl font-light text-primary leading-tight">
                 {monthName} {dayNum}
@@ -137,7 +155,7 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
           </div>
 
           {/* Middle: Photo */}
-          <div className="relative bg-black/10 flex items-center justify-center overflow-hidden">
+          <div className="relative flex items-center justify-center overflow-hidden" style={{ background: bg.mid }}>
             {memory.photos.length > 0 ? (
               <>
                 <img
@@ -183,7 +201,7 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
           </div>
 
           {/* Right: Notes & voice */}
-          <div className="p-5 border-l border-white/20 flex flex-col gap-4">
+          <div className="p-5 flex flex-col gap-4" style={{ borderLeft: `1px solid ${bg.border}` }}>
             {/* Notes */}
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
@@ -202,7 +220,7 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
 
             {/* Voice note */}
             {memory.voiceNote && (
-              <div className="glass rounded-xl p-4 flex flex-col items-center gap-2">
+              <div className="rounded-xl p-4 flex flex-col items-center gap-2" style={{ background: bg.mid, border: `1px solid ${bg.border}` }}>
                 <button
                   onClick={togglePlay}
                   className="w-10 h-10 rounded-full flex items-center justify-center text-white transition-transform hover:scale-110"
