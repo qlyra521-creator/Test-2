@@ -122,24 +122,25 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
         {/* Body */}
         <div className="grid grid-cols-3 gap-0 min-h-64">
           {/* Left: Date & stats */}
-          <div className="p-6 flex flex-col justify-between" style={{ borderRight: `1px solid ${bg.border}` }}>
-            <div>
+          <div className="p-4 flex flex-col gap-3" style={{ borderRight: `1px solid ${bg.border}` }}>
+            {/* Date block */}
+            <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.52)' }}>
               <div className="font-serif italic text-3xl font-light text-primary leading-tight">
                 {monthName} {dayNum}
               </div>
               <div className="text-secondary text-sm mt-1">{yearNum}</div>
+            </div>
 
-              <div className="mt-6">
-                <div className="text-xs text-secondary/60 uppercase tracking-widest mb-1">
-                  第几天 · Day of Journey
-                </div>
-                <div className="font-serif text-5xl font-light text-primary">
-                  {dot.dayOfJourney}
-                </div>
+            {/* Day of Journey block */}
+            <div className="rounded-2xl p-4 flex-1" style={{ background: 'rgba(255,255,255,0.52)' }}>
+              <div className="text-xs text-secondary/60 uppercase tracking-widest mb-1">
+                Day of Journey
               </div>
-
+              <div className="font-serif text-5xl font-light text-primary">
+                {dot.dayOfJourney}
+              </div>
               {memory.location && (
-                <div className="mt-4 flex items-center gap-1.5 text-secondary text-xs">
+                <div className="mt-3 flex items-center gap-1.5 text-secondary text-xs">
                   <MapPin size={11} />
                   <span>{memory.location}</span>
                 </div>
@@ -147,7 +148,7 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
             </div>
 
             <div
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-white text-xs mt-4 self-start"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-white text-xs self-start"
               style={{ background: typeColor }}
             >
               {MEMORY_LABELS[memory.type]}
@@ -155,14 +156,14 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
           </div>
 
           {/* Middle: Photo */}
-          <div className="relative flex items-center justify-center overflow-hidden" style={{ background: bg.mid }}>
+          <div className="relative flex items-center justify-center overflow-hidden p-4" style={{ background: bg.mid }}>
             {memory.photos.length > 0 ? (
-              <>
+              <div className="relative w-full h-full rounded-2xl overflow-hidden" style={{ minHeight: 220 }}>
                 <img
                   src={memory.photos[photoIdx]}
                   alt="memory"
                   className="w-full h-full object-cover"
-                  style={{ minHeight: 260 }}
+                  style={{ minHeight: 220 }}
                 />
                 {memory.photos.length > 1 && (
                   <>
@@ -191,9 +192,9 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
                     </div>
                   </>
                 )}
-              </>
+              </div>
             ) : (
-              <div className="flex items-center justify-center w-full h-full" style={{ minHeight: 220 }}>
+              <div className="flex items-center justify-center w-full h-full rounded-2xl" style={{ minHeight: 220, background: 'rgba(255,255,255,0.52)' }}>
                 {(() => {
                   const S = 'rgba(50,38,62,0.78)';   // stroke / dark
                   const G = 'rgba(245,208,130,0.82)'; // golden dog fill
@@ -276,9 +277,9 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
           </div>
 
           {/* Right: Notes & voice */}
-          <div className="p-5 flex flex-col gap-4" style={{ borderLeft: `1px solid ${bg.border}` }}>
-            {/* Notes */}
-            <div className="flex-1">
+          <div className="p-4 flex flex-col gap-3" style={{ borderLeft: `1px solid ${bg.border}` }}>
+            {/* Notes block */}
+            <div className="flex-1 rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.52)' }}>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs text-secondary/60 uppercase tracking-wider">记录 · Notes</span>
               </div>
@@ -289,13 +290,13 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
             </div>
 
             {/* Author */}
-            <div className="text-xs text-secondary/50 italic">
+            <div className="text-xs text-secondary/50 italic px-1">
               by {USER_NAMES[memory.author]}
             </div>
 
-            {/* Voice note */}
+            {/* Voice note block */}
             {memory.voiceNote && (
-              <div className="rounded-xl p-4 flex flex-col items-center gap-2" style={{ background: bg.mid, border: `1px solid ${bg.border}` }}>
+              <div className="rounded-2xl p-4 flex flex-col items-center gap-2" style={{ background: 'rgba(255,255,255,0.52)' }}>
                 <button
                   onClick={togglePlay}
                   className="w-10 h-10 rounded-full flex items-center justify-center text-white transition-transform hover:scale-110"
