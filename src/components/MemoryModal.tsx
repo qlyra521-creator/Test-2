@@ -215,29 +215,7 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
             {/* No-photo prompt — small, at bottom */}
             {memory.photos.length === 0 && (
               <div className="rounded-2xl p-3 flex items-center gap-3" style={{ background: 'rgba(255,255,255,0.52)' }}>
-                <svg viewBox="0 0 120 72" width="90" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  {/* White fluffy dog (left) */}
-                  <ellipse cx="34" cy="54" rx="18" ry="13" fill="rgba(255,255,255,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.6" strokeLinejoin="round"/>
-                  <circle cx="34" cy="30" r="16" fill="rgba(255,255,255,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.6"/>
-                  <circle cx="24" cy="18" r="7" fill="rgba(255,255,255,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.6"/>
-                  <circle cx="44" cy="18" r="7" fill="rgba(255,255,255,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.6"/>
-                  <circle cx="29" cy="29" r="2" fill="rgba(50,38,62,0.75)"/>
-                  <circle cx="39" cy="29" r="2" fill="rgba(50,38,62,0.75)"/>
-                  <path d="M28 36 Q34 41 40 36" fill="none" stroke="rgba(50,38,62,0.7)" strokeWidth="1.4" strokeLinecap="round"/>
-                  <ellipse cx="28" cy="65" rx="7" ry="3.5" fill="rgba(255,255,255,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.4"/>
-                  <ellipse cx="40" cy="65" rx="7" ry="3.5" fill="rgba(255,255,255,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.4"/>
-                  {/* Tan dog (right) */}
-                  <ellipse cx="84" cy="54" rx="18" ry="13" fill="rgba(230,185,110,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.6" strokeLinejoin="round"/>
-                  <circle cx="84" cy="30" r="16" fill="rgba(230,185,110,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.6"/>
-                  <ellipse cx="70" cy="34" rx="7" ry="11" fill="rgba(230,185,110,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.6"/>
-                  <ellipse cx="98" cy="34" rx="7" ry="11" fill="rgba(230,185,110,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.6"/>
-                  <circle cx="79" cy="29" r="2" fill="rgba(50,38,62,0.75)"/>
-                  <circle cx="89" cy="29" r="2" fill="rgba(50,38,62,0.75)"/>
-                  <path d="M78 36 Q84 41 90 36" fill="none" stroke="rgba(50,38,62,0.7)" strokeWidth="1.4" strokeLinecap="round"/>
-                  <path d="M69 46 Q84 52 99 46" fill="none" stroke="#D4937A" strokeWidth="2.5" strokeLinecap="round"/>
-                  <ellipse cx="78" cy="65" rx="7" ry="3.5" fill="rgba(230,185,110,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.4"/>
-                  <ellipse cx="90" cy="65" rx="7" ry="3.5" fill="rgba(230,185,110,0.9)" stroke="rgba(50,38,62,0.7)" strokeWidth="1.4"/>
-                </svg>
+                <img src="/dog.gif.png" alt="dogs" className="w-20 h-auto" />
                 <span className="text-xs text-secondary/50 italic leading-relaxed">Add some photos~</span>
               </div>
             )}
