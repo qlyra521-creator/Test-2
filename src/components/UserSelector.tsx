@@ -31,7 +31,7 @@ export default function UserSelector() {
         {/* Title with mirror reflection */}
         <div className="relative inline-block mb-3">
           <h1 className="font-serif text-6xl font-light text-primary tracking-wide leading-none">
-            Remember We
+            Remember WE
           </h1>
           {/* Mirror reflection */}
           <div
@@ -46,7 +46,7 @@ export default function UserSelector() {
               marginTop: '2px',
             }}
           >
-            Remember We
+            Remember WE
           </div>
         </div>
         <p className="text-secondary text-sm tracking-widest uppercase">
