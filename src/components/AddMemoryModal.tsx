@@ -291,20 +291,25 @@ export default function AddMemoryModal({ defaultDate, onClose, editMemory }: Pro
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-white/20 flex justify-end gap-3">
+        <div className="px-6 py-4 flex justify-end gap-3" style={{ borderTop: '1px solid rgba(200, 190, 210, 0.25)' }}>
           <button
             onClick={onClose}
-            className="px-5 py-2 rounded-full text-sm text-secondary hover:text-primary transition-colors"
+            className="px-5 py-2 rounded-full text-sm transition-all hover:opacity-80"
+            style={{
+              color: 'rgba(140, 120, 145, 0.85)',
+              background: 'rgba(210, 195, 225, 0.2)',
+              border: '1px solid rgba(200, 185, 215, 0.35)',
+            }}
           >
             取消 · Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={saving || !title.trim()}
-            className="px-6 py-2 rounded-full text-sm text-white transition-all hover:opacity-90 disabled:opacity-40"
-            style={{ background: 'linear-gradient(135deg, #C97EA0, #D4937A)' }}
+            className="px-6 py-2 rounded-full text-sm text-white transition-all hover:opacity-90 disabled:opacity-35 flex items-center gap-1.5"
+            style={{ background: 'linear-gradient(135deg, #C97EA0 0%, #9AACAA 100%)', boxShadow: '0 2px 12px rgba(201,126,160,0.3)' }}
           >
-            {saving ? '保存中 · Saving…' : '保存记忆 · Save'}
+            {saving ? '保存中…' : '✦ 保存记忆 · Save'}
           </button>
         </div>
       </div>
