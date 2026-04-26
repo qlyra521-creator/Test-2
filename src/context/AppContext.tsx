@@ -21,9 +21,10 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | null>(null);
 
-const APP_VERSION = '2';
+const APP_VERSION = '3';
 if (typeof window !== 'undefined' && localStorage.getItem('rm_version') !== APP_VERSION) {
   localStorage.removeItem('rm_letters');
+  localStorage.removeItem('rm_memories');
   localStorage.setItem('rm_version', APP_VERSION);
 }
 
