@@ -6,11 +6,11 @@ import { formatDateEN } from '../utils/dateUtils';
 
 // Morandi-toned card backgrounds per type
 const TYPE_BG: Record<MemoryType, { card: string; mid: string; border: string }> = {
-  daily:       { card: 'rgba(238, 225, 195, 0.82)', mid: 'rgba(215, 200, 165, 0.35)', border: 'rgba(200, 182, 145, 0.3)' },
-  travel:      { card: 'rgba(195, 220, 235, 0.82)', mid: 'rgba(168, 198, 218, 0.35)', border: 'rgba(145, 178, 205, 0.3)' },
-  anniversary: { card: 'rgba(232, 208, 222, 0.82)', mid: 'rgba(210, 180, 200, 0.35)', border: 'rgba(190, 155, 180, 0.3)' },
-  special:     { card: 'rgba(238, 215, 200, 0.82)', mid: 'rgba(218, 188, 168, 0.35)', border: 'rgba(200, 165, 145, 0.3)' },
-  note:        { card: 'rgba(200, 220, 215, 0.82)', mid: 'rgba(172, 202, 196, 0.35)', border: 'rgba(148, 182, 175, 0.3)' },
+  daily:       { card: 'rgba(238, 225, 195, 0.45)', mid: 'rgba(215, 200, 165, 0.25)', border: 'rgba(200, 182, 145, 0.2)' },
+  travel:      { card: 'rgba(195, 220, 235, 0.45)', mid: 'rgba(168, 198, 218, 0.25)', border: 'rgba(145, 178, 205, 0.2)' },
+  anniversary: { card: 'rgba(232, 208, 222, 0.45)', mid: 'rgba(210, 180, 200, 0.25)', border: 'rgba(190, 155, 180, 0.2)' },
+  special:     { card: 'rgba(238, 215, 200, 0.45)', mid: 'rgba(218, 188, 168, 0.25)', border: 'rgba(200, 165, 145, 0.2)' },
+  note:        { card: 'rgba(200, 220, 215, 0.45)', mid: 'rgba(172, 202, 196, 0.25)', border: 'rgba(148, 182, 175, 0.2)' },
 };
 
 interface DotInfo {
