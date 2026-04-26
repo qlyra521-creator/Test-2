@@ -101,7 +101,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [currentView, setCurrentView] = useState<AppView>('grid');
   const [memories, setMemories] = useState<Memory[]>([]);
   const [letters, setLetters] = useState<Letter[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
