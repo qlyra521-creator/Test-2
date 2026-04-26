@@ -207,11 +207,6 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
               </div>
             </div>
 
-            {/* Author */}
-            <div className="text-xs text-secondary/50 italic px-1">
-              by {USER_NAMES[memory.author]}
-            </div>
-
             {/* No-photo prompt — small, at bottom */}
             {memory.photos.length === 0 && (
               <div className="rounded-2xl p-3 flex items-center gap-3" style={{ background: 'rgba(255,255,255,0.52)' }}>
@@ -219,6 +214,11 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
                 <span className="text-xs text-secondary/50 italic leading-relaxed">Add some photos~</span>
               </div>
             )}
+
+            {/* Author */}
+            <div className="text-xs text-secondary/50 italic px-1">
+              by {USER_NAMES[memory.author]}
+            </div>
 
             {/* Voice note block */}
             {memory.voiceNote && (
