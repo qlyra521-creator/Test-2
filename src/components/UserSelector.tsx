@@ -142,7 +142,7 @@ export default function UserSelector() {
         </div>
         <button
           onClick={() => setShowProfiles(false)}
-          className="text-secondary/60 hover:text-secondary transition-colors text-sm tracking-wider"
+          className="mt-2 flex items-center gap-1.5 text-secondary hover:text-primary transition-colors text-sm tracking-wider glass rounded-full px-5 py-2"
         >
           ← 返回 · Back
         </button>
