@@ -134,8 +134,18 @@ export default function CalendarView({ onClose }: Props) {
               >
                 {isToday ? (
                   <span
-                    className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold text-white"
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold text-white"
                     style={{ background: 'linear-gradient(135deg, #C97EA0, #D4937A)' }}
+                  >
+                    {day}
+                  </span>
+                ) : hasMem ? (
+                  <span
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold text-white"
+                    style={{ background: MEMORY_COLORS[mems.sort((a, b) => {
+                      const p = ['anniversary','special','travel','daily','note'];
+                      return p.indexOf(a.type) - p.indexOf(b.type);
+                    })[0].type] }}
                   >
                     {day}
                   </span>
@@ -143,24 +153,10 @@ export default function CalendarView({ onClose }: Props) {
                   <span className={`text-sm ${
                     isBeforeStart || isFuture
                       ? 'text-secondary/25'
-                      : hasMem
-                      ? 'text-primary font-medium'
                       : 'text-secondary/55'
                   }`}>
                     {day}
                   </span>
-                )}
-                {/* Colored dots for memory types */}
-                {hasMem && (
-                  <div className="flex gap-0.5 mt-0.5">
-                    {mems.slice(0, 3).map((m, mi) => (
-                      <span
-                        key={mi}
-                        className="w-1 h-1 rounded-full"
-                        style={{ background: MEMORY_COLORS[m.type] }}
-                      />
-                    ))}
-                  </div>
                 )}
               </button>
             );
