@@ -151,14 +151,14 @@ export default function StarGrid() {
   return (
     <div className="pt-16 pb-4 px-4 flex flex-col h-screen">
       {/* Legend and filter bar */}
-      <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
         {/* Legend */}
-        <div className="flex items-center gap-4 flex-wrap">
-          <span className="text-xs text-secondary italic">Every point is a star in our shared sky</span>
-          <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-xs text-secondary italic hidden sm:block">Every point is a star in our shared sky</span>
+          <div className="flex items-center gap-2 flex-wrap">
             {LEGEND_TYPES.map(type => (
               <div key={type} className="flex items-center gap-1">
-                <svg width="10" height="10" viewBox="0 0 10 10">
+                <svg width="8" height="8" viewBox="0 0 10 10">
                   <circle cx="5" cy="5" r="4" fill={MEMORY_COLORS[type]} />
                 </svg>
                 <span className="text-xs text-secondary">{MEMORY_LABELS[type]}</span>
@@ -169,18 +169,18 @@ export default function StarGrid() {
 
         {/* View mode filter */}
         {currentUser && (
-          <div className="glass rounded-full flex overflow-hidden text-xs">
+          <div className="glass rounded-full flex overflow-hidden text-xs self-start sm:self-auto">
             {(['mine', 'partner', 'merged'] as const).map(mode => (
               <button
                 key={mode}
                 onClick={() => setViewMode(mode)}
-                className={`px-4 py-1.5 transition-all ${
+                className={`px-3 py-1.5 transition-all ${
                   viewMode === mode
                     ? 'bg-white/40 text-primary font-medium'
                     : 'text-secondary hover:text-primary'
                 }`}
               >
-                {mode === 'mine' ? '只看我的 Mine' : mode === 'partner' ? '只看Ta的 Partner' : '合并 Merged'}
+                {mode === 'mine' ? '只看我的' : mode === 'partner' ? '只看Ta的' : '合并'}
               </button>
             ))}
           </div>
@@ -192,8 +192,9 @@ export default function StarGrid() {
         <svg
           ref={svgRef}
           viewBox={`0 0 ${SVG_W} ${SVG_H}`}
-          width="100%"
-          style={{ minWidth: 600, display: 'block' }}
+          width={SVG_W}
+          height={SVG_H}
+          style={{ display: 'block' }}
         >
           <defs>
             {LEGEND_TYPES.map(type => (
@@ -372,7 +373,7 @@ export default function StarGrid() {
       {currentUser && (
         <button
           onClick={() => setAddDate(toDateStr(new Date()))}
-          className="fixed bottom-8 right-8 w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform"
+          className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform"
           style={{ background: 'linear-gradient(135deg, #C97EA0, #D4937A)' }}
           title="添加记忆"
         >
