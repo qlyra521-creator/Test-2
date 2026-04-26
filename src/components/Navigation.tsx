@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { Settings, Mail, Calendar, Sun, Moon } from 'lucide-react';
+import { Gift, Mail, Calendar, Sun, Moon } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { UserId, USER_NAMES, START_DATE } from '../types';
 import { daysBetween } from '../utils/dateUtils';
 import CalendarView from './CalendarView';
+import SurpriseModal from './SurpriseModal';
 
 const TODAY = new Date();
 const END_LABEL = `${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][TODAY.getMonth()]} ${TODAY.getFullYear()}`;
 
 export default function Navigation() {
-  const { currentUser, setCurrentUser, theme, setTheme, currentView, setCurrentView } = useApp();
+  const { currentUser, setCurrentUser, theme, setTheme, currentView, setCurrentView, memories } = useApp();
   const [showCalendar, setShowCalendar] = useState(false);
+  const [showSurprise, setShowSurprise] = useState(false);
 
   const totalDays = daysBetween(START_DATE, TODAY) + 1;
 
@@ -23,10 +25,10 @@ export default function Navigation() {
   return (
     <>
     <nav className="glass fixed top-0 left-0 right-0 z-40 px-3 sm:px-6 py-3 flex items-center gap-2 sm:gap-4">
-      {/* Logo */}
+      {/* Logo — click to return to user selection */}
       <button
-        onClick={() => setCurrentView('grid')}
-        className="font-serif text-base sm:text-xl font-light text-primary shrink-0"
+        onClick={() => setCurrentUser(null)}
+        className="font-serif text-base sm:text-xl font-light text-primary shrink-0 hover:opacity-70 transition-opacity"
       >
         Remember We
       </button>
@@ -97,16 +99,17 @@ export default function Navigation() {
         </button>
       ))}
 
-      {/* Logout */}
+      {/* Surprise bag */}
       <button
-        onClick={() => setCurrentUser(null)}
-        title="返回选择"
+        onClick={() => setShowSurprise(true)}
+        title="惊喜 · Surprise"
         className="text-secondary hover:text-primary transition-colors"
       >
-        <Settings size={15} />
+        <Gift size={15} />
       </button>
     </nav>
     {showCalendar && <CalendarView onClose={() => setShowCalendar(false)} />}
+    {showSurprise && <SurpriseModal memories={memories} onClose={() => setShowSurprise(false)} />}
     </>
   );
 }
