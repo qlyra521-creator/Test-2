@@ -19,6 +19,7 @@ interface AppContextType {
   addLetter: (l: Letter) => void;
   markLetterRead: (id: string) => void;
   loading: boolean;
+  dbError: string | null;
   fetchMemoryMedia: (id: string) => Promise<{ photos: string[]; voiceNote?: string }>;
 }
 
@@ -103,22 +104,38 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [memories, setMemories] = useState<Memory[]>([]);
   const [letters, setLetters] = useState<Letter[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dbError, setDbError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     async function fetchData() {
+      const timeout = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('连接超时：Supabase 无响应（可能已暂停）')), 10000)
+      );
       try {
-        const [{ data: mems, error: memErr }, { data: lets }] = await Promise.all([
-          supabase.from('memories').select('id,date,author,type,title,content,location,day_of_journey'),
-          supabase.from('letters').select('*'),
+        const [{ data: mems, error: memErr }, { data: lets, error: letErr }] = await Promise.race([
+          Promise.all([
+            supabase.from('memories').select('id,date,author,type,title,content,location,day_of_journey'),
+            supabase.from('letters').select('*'),
+          ]),
+          timeout,
         ]);
-        if (memErr) console.error('[RW] memories error:', memErr.message, memErr.code);
+        if (memErr) {
+          console.error('[RW] memories error:', memErr.message, memErr.code);
+          if (!cancelled) setDbError(memErr.message);
+        }
+        if (letErr) {
+          console.error('[RW] letters error:', letErr.message, letErr.code);
+          if (!cancelled && !memErr) setDbError(letErr.message);
+        }
         if (!cancelled) {
           if (mems) setMemories(mems.map(rowToMemory).sort((a, b) => a.date.localeCompare(b.date)));
           if (lets) setLetters(lets.map(rowToLetter).sort((a, b) => a.createdAt.localeCompare(b.createdAt)));
         }
       } catch (e) {
-        console.error('[RW] fetch threw:', e);
+        const msg = e instanceof Error ? e.message : '无法连接到数据库';
+        console.error('[RW] fetch threw:', msg);
+        if (!cancelled) setDbError(msg);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -228,7 +245,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       currentView, setCurrentView,
       memories, addMemory, updateMemory, deleteMemory,
       letters, addLetter, markLetterRead,
-      loading, fetchMemoryMedia,
+      loading, dbError, fetchMemoryMedia,
     }}>
       {children}
     </AppContext.Provider>
