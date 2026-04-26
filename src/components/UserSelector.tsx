@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { UserId, START_DATE } from '../types';
 import { daysBetween } from '../utils/dateUtils';
@@ -7,6 +7,7 @@ const ANNIVERSARY_DATE = new Date(2026, 3, 29); // April 29, 2026
 
 export default function UserSelector() {
   const { setCurrentUser, theme, setTheme } = useApp();
+  const [showProfiles, setShowProfiles] = useState(false);
   const today = new Date();
   const totalDays = daysBetween(START_DATE, today) + 1;
   const daysToAnniversary = daysBetween(today, ANNIVERSARY_DATE);
@@ -81,44 +82,57 @@ export default function UserSelector() {
         </div>
       </div>
 
+      {/* Enter button — shown before profiles */}
+      {!showProfiles && (
+        <button
+          onClick={() => setShowProfiles(true)}
+          className="mt-2 flex flex-col items-center gap-2 text-secondary/60 hover:text-secondary transition-colors animate-fade-in group"
+          style={{ animationDelay: '0.2s' }}
+        >
+          <span className="text-xs tracking-widest uppercase">进入 · Enter</span>
+          <span className="text-lg animate-bounce">↓</span>
+        </button>
+      )}
+
       {/* Profile cards */}
-      <div className="flex gap-6 animate-slide-up" style={{ animationDelay: '0.15s' }}>
-        {profiles.map((profile) => (
-          <button
-            key={profile.id}
-            onClick={() => setCurrentUser(profile.id)}
-            className="glass-card px-10 py-8 flex flex-col items-center gap-4 hover:scale-105 transition-transform duration-300 group"
-            style={{ minWidth: 200 }}
-          >
-            {/* Avatar */}
-            <div
-              className="w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl font-serif font-light"
-              style={{
-                background: profile.id === 'shiyun'
-                  ? 'linear-gradient(135deg, #C97EA0, #D4937A)'
-                  : 'linear-gradient(135deg, #7DAFC8, #9AACAA)',
-              }}
+      {showProfiles && (
+        <div className="flex gap-6 animate-slide-up">
+          {profiles.map((profile) => (
+            <button
+              key={profile.id}
+              onClick={() => setCurrentUser(profile.id)}
+              className="glass-card px-10 py-8 flex flex-col items-center gap-4 hover:scale-105 transition-transform duration-300 group"
+              style={{ minWidth: 200 }}
             >
-              {profile.name[0]}
-            </div>
-            <div className="text-center">
-              <div className="font-serif text-2xl font-light text-primary">{profile.name}</div>
-              <div className="text-secondary text-xs mt-0.5 tracking-wider">{profile.nameZh}</div>
-            </div>
-            <div className="text-xs text-secondary/70 mt-1">{profile.desc}</div>
-            <div
-              className="mt-2 px-5 py-1.5 rounded-full text-sm font-light text-white transition-opacity"
-              style={{
-                background: profile.id === 'shiyun'
-                  ? 'linear-gradient(135deg, #C97EA0, #D4937A)'
-                  : 'linear-gradient(135deg, #7DAFC8, #9AACAA)',
-              }}
-            >
-              Enter →
-            </div>
-          </button>
-        ))}
-      </div>
+              <div
+                className="w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl font-serif font-light"
+                style={{
+                  background: profile.id === 'shiyun'
+                    ? 'linear-gradient(135deg, #C97EA0, #D4937A)'
+                    : 'linear-gradient(135deg, #7DAFC8, #9AACAA)',
+                }}
+              >
+                {profile.name[0]}
+              </div>
+              <div className="text-center">
+                <div className="font-serif text-2xl font-light text-primary">{profile.name}</div>
+                <div className="text-secondary text-xs mt-0.5 tracking-wider">{profile.nameZh}</div>
+              </div>
+              <div className="text-xs text-secondary/70 mt-1">{profile.desc}</div>
+              <div
+                className="mt-2 px-5 py-1.5 rounded-full text-sm font-light text-white transition-opacity"
+                style={{
+                  background: profile.id === 'shiyun'
+                    ? 'linear-gradient(135deg, #C97EA0, #D4937A)'
+                    : 'linear-gradient(135deg, #7DAFC8, #9AACAA)',
+                }}
+              >
+                Enter →
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Footer */}
       <p className="mt-12 text-xs text-secondary/60 text-center animate-fade-in" style={{ animationDelay: '0.3s' }}>
