@@ -210,7 +210,7 @@ export default function MemoryModal({ dot, onClose, onAddMemory }: Props) {
             {/* No-photo prompt — small, at bottom */}
             {memory.photos.length === 0 && (
               <div className="rounded-2xl p-3 flex items-center gap-3" style={{ background: 'rgba(255,255,255,0.52)' }}>
-                <img src="/dog.gif.png" alt="dogs" className="w-20 h-auto" />
+                <img src="/dog.png" alt="dogs" className="w-20 h-auto" />
                 <span className="text-xs text-secondary/50 italic leading-relaxed">Add some photos~</span>
               </div>
             )}
