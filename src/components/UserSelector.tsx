@@ -132,7 +132,7 @@ export default function UserSelector() {
                     : 'linear-gradient(135deg, #7DAFC8, #9AACAA)',
                 }}
               >
-                Enter →
+                Continue →
               </div>
             </button>
           ))}
@@ -140,9 +140,11 @@ export default function UserSelector() {
       )}
 
       {/* Footer */}
-      <p className="mt-12 text-xs text-secondary/60 text-center animate-fade-in" style={{ animationDelay: '0.3s' }}>
-        诗云 & Tim · 2024.04.29 — forever
-      </p>
+      {!showProfiles && (
+        <p className="mt-12 text-xs text-secondary/60 text-center animate-fade-in" style={{ animationDelay: '0.3s' }}>
+          诗云 & Tim · 2024.04.29 — forever
+        </p>
+      )}
     </div>
   );
 }
