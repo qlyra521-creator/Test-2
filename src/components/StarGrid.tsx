@@ -90,7 +90,7 @@ function getPrimaryType(memories: Memory[]): MemoryType {
 const LEGEND_TYPES: MemoryType[] = ['daily', 'travel', 'anniversary', 'special', 'note'];
 
 export default function StarGrid() {
-  const { memories, currentUser, viewMode, setViewMode } = useApp();
+  const { memories, currentUser, viewMode, setViewMode, theme } = useApp();
   const [selectedDot, setSelectedDot] = useState<DotInfo | null>(null);
   const [addDate, setAddDate] = useState<string | null>(null);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
@@ -375,7 +375,7 @@ export default function StarGrid() {
         <button
           onClick={() => setAddDate(toDateStr(new Date()))}
           className="fixed bottom-32 right-4 sm:bottom-[6.5rem] sm:right-8 w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform"
-          style={{ background: 'linear-gradient(135deg, #C97EA0, #D4937A)' }}
+          style={{ background: theme === 'mint' ? 'linear-gradient(135deg, #7DAFC8, #9AACAA)' : 'linear-gradient(135deg, #C97EA0, #D4937A)' }}
           title="添加记忆"
         >
           <Plus size={22} />
