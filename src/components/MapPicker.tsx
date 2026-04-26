@@ -1,5 +1,15 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { X, Loader, MapPin, Search } from 'lucide-react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+// Fix default marker icons
+delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+});
 
 interface Props {
   onSelect: (name: string) => void;
@@ -12,17 +22,65 @@ interface NominatimResult {
   lon: string;
 }
 
-const DEFAULT_EMBED = 'https://maps.google.com/maps?q=Amsterdam&output=embed&z=12&hl=zh-CN';
-
 export default function MapPicker({ onSelect, onClose }: Props) {
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<L.Map | null>(null);
+  const markerRef = useRef<L.Marker | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<NominatimResult[]>([]);
   const [searching, setSearching] = useState(false);
+  const [reversing, setReversing] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedName, setSelectedName] = useState('');
-  const [embedSrc, setEmbedSrc] = useState(DEFAULT_EMBED);
+
+  // Init Leaflet map
+  useEffect(() => {
+    if (!mapContainerRef.current || mapRef.current) return;
+    const map = L.map(mapContainerRef.current, { zoomControl: true }).setView([20, 0], 2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 19,
+    }).addTo(map);
+
+    map.on('click', async (e: L.LeafletMouseEvent) => {
+      const { lat, lng } = e.latlng;
+      placeMarker(map, lat, lng);
+      setReversing(true);
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
+          { headers: { 'Accept-Language': 'zh,en' } }
+        );
+        const data = await res.json();
+        const name =
+          data.address?.city ||
+          data.address?.town ||
+          data.address?.village ||
+          data.address?.county ||
+          data.display_name?.split(',')[0] ||
+          `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+        setSelectedName(name);
+        setQuery(name);
+      } catch {
+        const name = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+        setSelectedName(name);
+        setQuery(name);
+      } finally {
+        setReversing(false);
+      }
+    });
+
+    mapRef.current = map;
+    return () => { map.remove(); mapRef.current = null; };
+  }, []);
+
+  function placeMarker(map: L.Map, lat: number, lng: number) {
+    if (markerRef.current) markerRef.current.remove();
+    markerRef.current = L.marker([lat, lng]).addTo(map);
+    map.panTo([lat, lng]);
+  }
 
   const fetchSuggestions = useCallback(async (q: string) => {
     if (q.trim().length < 2) { setSuggestions([]); setShowSuggestions(false); return; }
@@ -56,18 +114,12 @@ export default function MapPicker({ onSelect, onClose }: Props) {
     setSelectedName(name);
     setSuggestions([]);
     setShowSuggestions(false);
-    setEmbedSrc(
-      `https://maps.google.com/maps?q=${encodeURIComponent(r.display_name.split(',').slice(0, 3).join(','))}&output=embed&z=15&hl=zh-CN`
-    );
-  };
-
-  const handleSearch = () => {
-    if (!query.trim()) return;
-    setSuggestions([]);
-    setShowSuggestions(false);
-    setEmbedSrc(
-      `https://maps.google.com/maps?q=${encodeURIComponent(query)}&output=embed&z=14&hl=zh-CN`
-    );
+    const lat = parseFloat(r.lat);
+    const lng = parseFloat(r.lon);
+    if (mapRef.current) {
+      placeMarker(mapRef.current, lat, lng);
+      mapRef.current.setView([lat, lng], 14);
+    }
   };
 
   return (
@@ -83,12 +135,12 @@ export default function MapPicker({ onSelect, onClose }: Props) {
           borderRadius: 20,
           border: '1px solid rgba(255, 255, 255, 0.85)',
           boxShadow: '0 8px 40px rgba(80, 60, 100, 0.15)',
-          overflow: 'visible',
+          overflow: 'hidden',
         }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3.5 shrink-0" style={{ borderBottom: '1px solid rgba(200,190,210,0.2)', borderRadius: '20px 20px 0 0' }}>
+        <div className="flex items-center justify-between px-5 py-3.5 shrink-0" style={{ borderBottom: '1px solid rgba(200,190,210,0.2)' }}>
           <h3 className="font-serif text-lg font-light text-primary">选择地点 · Pick Location</h3>
           <button onClick={onClose} className="text-secondary hover:text-primary transition-colors">
             <X size={16} />
@@ -104,19 +156,18 @@ export default function MapPicker({ onSelect, onClose }: Props) {
                 value={query}
                 onChange={handleInputChange}
                 onKeyDown={e => {
-                  if (e.key === 'Enter') handleSearch();
                   if (e.key === 'Escape') setShowSuggestions(false);
                 }}
                 onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
-                placeholder="搜索地点或邮编 · Search place or postcode…"
+                placeholder="搜索地点 · Search，或直接在地图上点击"
                 style={{ marginBottom: 0, paddingRight: 36 }}
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary/60 pointer-events-none">
-                {searching ? <Loader size={13} className="animate-spin" /> : <MapPin size={13} />}
+                {searching || reversing ? <Loader size={13} className="animate-spin" /> : <MapPin size={13} />}
               </div>
             </div>
             <button
-              onClick={handleSearch}
+              onClick={() => fetchSuggestions(query)}
               className="shrink-0 w-9 h-9 rounded-lg flex items-center justify-center text-white hover:opacity-90 transition-opacity"
               style={{ background: 'linear-gradient(135deg, #C97EA0, #9AACAA)' }}
             >
@@ -150,31 +201,24 @@ export default function MapPicker({ onSelect, onClose }: Props) {
           )}
         </div>
 
-        {/* Google Maps iframe */}
-        <div className="flex-1 mx-4 mb-0 rounded-xl overflow-hidden" style={{ zIndex: 0 }}>
-          <iframe
-            key={embedSrc}
-            src={embedSrc}
-            width="100%"
-            height="100%"
-            style={{ border: 0, display: 'block' }}
-            allowFullScreen
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
+        {/* Leaflet map */}
+        <div className="flex-1 mx-4 rounded-xl overflow-hidden" style={{ minHeight: 0 }}>
+          <div ref={mapContainerRef} style={{ width: '100%', height: '100%' }} />
         </div>
 
         {/* Footer */}
         <div className="px-5 py-3.5 shrink-0 flex items-center gap-3" style={{ borderTop: '1px solid rgba(200,190,210,0.2)' }}>
           <div className="flex-1 text-sm text-secondary truncate">
-            {selectedName
-              ? <><span className="mr-1">📍</span>{selectedName}</>
-              : <span className="italic text-secondary/60">搜索并确认地点 · Search and confirm</span>
+            {reversing
+              ? <span className="italic text-secondary/60">获取位置中…</span>
+              : selectedName
+                ? <><span className="mr-1">📍</span>{selectedName}</>
+                : <span className="italic text-secondary/60">搜索地点，或点击地图选择</span>
             }
           </div>
           <button
             onClick={() => { if (selectedName.trim()) { onSelect(selectedName.trim()); onClose(); } }}
-            disabled={!selectedName.trim()}
+            disabled={!selectedName.trim() || reversing}
             className="shrink-0 px-5 py-2 rounded-full text-sm text-white disabled:opacity-40 transition-all hover:opacity-90"
             style={{ background: 'linear-gradient(135deg, #C97EA0, #D4937A)' }}
           >
@@ -185,3 +229,4 @@ export default function MapPicker({ onSelect, onClose }: Props) {
     </div>
   );
 }
+
