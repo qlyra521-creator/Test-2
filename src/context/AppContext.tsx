@@ -106,13 +106,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let cancelled = false;
     async function fetchData() {
-      const [{ data: mems, error: memErr }, { data: lets, error: letErr }] = await Promise.all([
-        supabase.from('memories').select('*').order('date', { ascending: true }),
-        supabase.from('letters').select('*').order('created_at', { ascending: true }),
+      const [{ data: mems }, { data: lets }] = await Promise.all([
+        supabase.from('memories').select('*'),
+        supabase.from('letters').select('*'),
       ]);
       if (!cancelled) {
-        setMemories((mems ?? []).map(rowToMemory));
-        setLetters((lets ?? []).map(rowToLetter));
+        setMemories((mems ?? []).map(rowToMemory).sort((a, b) => a.date.localeCompare(b.date)));
+        setLetters((lets ?? []).map(rowToLetter).sort((a, b) => a.createdAt.localeCompare(b.createdAt)));
         setLoading(false);
       }
     }
