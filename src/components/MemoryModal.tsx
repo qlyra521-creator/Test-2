@@ -180,7 +180,7 @@ export default function MemoryModal({ dot, onClose, onAddMemory, onPrev, onNext 
           @media(min-width:640px){
             .mem-left{border-right:1px solid ${bg.border}!important;border-top:none!important;}
             .mem-right{border-left:1px solid ${bg.border}!important;border-top:none!important;}
-            .mem-photo{border-top:none!important;}
+            .mem-photo{aspect-ratio:auto!important;height:100%;min-height:220px;}
           }
         `}</style>
         <div className={`grid gap-0 ${memory.photos.length > 0 ? 'grid-cols-2 sm:grid-cols-3' : 'grid-cols-2'}`}>
