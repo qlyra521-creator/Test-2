@@ -102,19 +102,25 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [currentView, setCurrentView] = useState<AppView>('grid');
   const [memories, setMemories] = useState<Memory[]>([]);
   const [letters, setLetters] = useState<Letter[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     async function fetchData() {
-      const [{ data: mems }, { data: lets }] = await Promise.all([
-        supabase.from('memories').select('id,date,author,type,title,content,location,day_of_journey'),
-        supabase.from('letters').select('*'),
-      ]);
-      if (!cancelled) {
-        setMemories((mems ?? []).map(rowToMemory).sort((a, b) => a.date.localeCompare(b.date)));
-        setLetters((lets ?? []).map(rowToLetter).sort((a, b) => a.createdAt.localeCompare(b.createdAt)));
-        setLoading(false);
+      try {
+        const [{ data: mems, error: memErr }, { data: lets }] = await Promise.all([
+          supabase.from('memories').select('id,date,author,type,title,content,location,day_of_journey'),
+          supabase.from('letters').select('*'),
+        ]);
+        if (memErr) console.error('[RW] memories error:', memErr.message, memErr.code);
+        if (!cancelled) {
+          if (mems) setMemories(mems.map(rowToMemory).sort((a, b) => a.date.localeCompare(b.date)));
+          if (lets) setLetters(lets.map(rowToLetter).sort((a, b) => a.createdAt.localeCompare(b.createdAt)));
+        }
+      } catch (e) {
+        console.error('[RW] fetch threw:', e);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     }
     fetchData();
