@@ -116,7 +116,8 @@ export default function AddMemoryModal({ defaultDate, onClose, editMemory }: Pro
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div
-        className="glass-card w-full max-w-xl animate-slide-up"
+        className="glass-card w-full max-w-xl animate-slide-up flex flex-col"
+        style={{ maxHeight: '90vh' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
@@ -127,7 +128,7 @@ export default function AddMemoryModal({ defaultDate, onClose, editMemory }: Pro
           </button>
         </div>
 
-        <div className="p-6 flex flex-col gap-5">
+        <div className="p-6 flex flex-col gap-5 overflow-y-auto flex-1">
           {/* Date */}
           <div className="flex gap-3 items-center">
             <div className="flex-1">
