@@ -175,7 +175,7 @@ function ComposeView({ onSent }: { onSent: () => void }) {
           />
         </div>
         <p className="text-xs text-secondary/50 mt-2">
-          在指定日期送达对方的收件箱 · Delivered on the chosen date. 选择今天则立即送达 · Choose today to send immediately.
+          在指定日期送达对方的收件箱 选择今天则立即送达 · Delivered on the chosen date. Choose today to send immediately.
         </p>
       </div>
 
