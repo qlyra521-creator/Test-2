@@ -28,13 +28,12 @@ export default function UserSelector() {
       </button>
 
       {/* Header */}
+      {!showProfiles && (
       <div className="text-center mb-12 animate-fade-in">
-        {/* Title with mirror reflection */}
         <div className="relative inline-block mb-3">
           <h1 className="font-serif text-6xl font-light text-primary tracking-wide leading-none">
             Remember WE
           </h1>
-          {/* Mirror reflection */}
           <div
             aria-hidden="true"
             className="font-serif text-6xl font-light tracking-wide leading-none select-none pointer-events-none"
@@ -57,8 +56,10 @@ export default function UserSelector() {
           每一颗星点，都是我们共享过的时刻
         </p>
       </div>
+      )}
 
       {/* Relationship stats */}
+      {!showProfiles && (
       <div className="glass-card px-8 py-5 mb-10 text-center animate-fade-in" style={{ animationDelay: '0.1s' }}>
         <div className="flex gap-12 items-center">
           <div>
@@ -81,6 +82,7 @@ export default function UserSelector() {
           </div>
         </div>
       </div>
+      )}
 
       {/* Enter button — shown before profiles */}
       {!showProfiles && (
@@ -123,7 +125,7 @@ export default function UserSelector() {
                 <div className="font-serif text-2xl font-light text-primary">{profile.name}</div>
                 <div className="text-secondary text-xs mt-0.5 tracking-wider">{profile.nameZh}</div>
               </div>
-              <div className="text-xs text-secondary/70 mt-1">{profile.desc}</div>
+
               <div
                 className="mt-2 px-5 py-1.5 rounded-full text-sm font-light text-white transition-opacity"
                 style={{
