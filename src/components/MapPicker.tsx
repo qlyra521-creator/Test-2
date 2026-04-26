@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { X, Search, Loader } from 'lucide-react';
+import { X, Loader, MapPin } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 
 interface Props {
@@ -7,24 +7,35 @@ interface Props {
   onClose: () => void;
 }
 
-const MARKER_ICON_URL = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png';
-const MARKER_SHADOW_URL = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png';
+interface NominatimResult {
+  display_name: string;
+  lat: string;
+  lon: string;
+  address?: Record<string, string>;
+}
 
 export default function MapPicker({ onSelect, onClose }: Props) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markerRef = useRef<L.Marker | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [selectedName, setSelectedName] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<{ display_name: string; lat: string; lon: string }[]>([]);
+  const [suggestions, setSuggestions] = useState<NominatimResult[]>([]);
   const [searching, setSearching] = useState(false);
   const [reversing, setReversing] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const placeMarker = useCallback((L: typeof import('leaflet'), lat: number, lng: number, name: string) => {
     const map = mapRef.current;
     if (!map) return;
-    const icon = L.icon({ iconUrl: MARKER_ICON_URL, shadowUrl: MARKER_SHADOW_URL, iconSize: [25, 41], iconAnchor: [12, 41] });
+    const icon = L.divIcon({
+      className: '',
+      html: `<div style="width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,#C97EA0,#7DAFC8);border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.25);"></div>`,
+      iconSize: [14, 14],
+      iconAnchor: [7, 7],
+    });
     if (markerRef.current) {
       markerRef.current.setLatLng([lat, lng]);
     } else {
@@ -37,11 +48,17 @@ export default function MapPicker({ onSelect, onClose }: Props) {
     if (!mapContainerRef.current || mapRef.current) return;
 
     import('leaflet').then(L => {
-      const map = L.map(mapContainerRef.current!).setView([31.2304, 121.4737], 10);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap',
-        maxZoom: 19,
+      const map = L.map(mapContainerRef.current!, { zoomControl: false }).setView([31.2304, 121.4737], 10);
+
+      // CartoDB Positron — modern, clean, minimal
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 20,
       }).addTo(map);
+
+      L.control.zoom({ position: 'bottomright' }).addTo(map);
+
       mapRef.current = map;
 
       map.on('click', async (e) => {
@@ -49,13 +66,14 @@ export default function MapPicker({ onSelect, onClose }: Props) {
         setReversing(true);
         try {
           const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=zh`,
-            { headers: { 'Accept-Language': 'zh' } }
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
+            { headers: { 'Accept-Language': 'zh,en' } }
           );
           const data = await res.json();
           const name =
             data.address?.tourism ||
             data.address?.amenity ||
+            data.address?.shop ||
             data.address?.road ||
             data.address?.suburb ||
             data.address?.city_district ||
@@ -84,24 +102,32 @@ export default function MapPicker({ onSelect, onClose }: Props) {
     };
   }, [placeMarker]);
 
-  const handleSearch = useCallback(async () => {
-    if (!searchQuery.trim()) return;
+  const fetchSuggestions = useCallback(async (q: string) => {
+    if (q.trim().length < 2) { setSuggestions([]); setShowSuggestions(false); return; }
     setSearching(true);
-    setSearchResults([]);
     try {
       const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=6&accept-language=zh`
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=6`,
+        { headers: { 'Accept-Language': 'zh,en' } }
       );
-      const data = await res.json();
-      setSearchResults(data);
+      const data: NominatimResult[] = await res.json();
+      setSuggestions(data);
+      setShowSuggestions(data.length > 0);
     } catch {
-      setSearchResults([]);
+      setSuggestions([]);
     } finally {
       setSearching(false);
     }
-  }, [searchQuery]);
+  }, []);
 
-  const selectResult = useCallback((result: { display_name: string; lat: string; lon: string }) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setSearchQuery(val);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => fetchSuggestions(val), 300);
+  };
+
+  const selectSuggestion = useCallback((result: NominatimResult) => {
     const lat = parseFloat(result.lat);
     const lng = parseFloat(result.lon);
     const name = result.display_name.split(',')[0].trim();
@@ -109,8 +135,9 @@ export default function MapPicker({ onSelect, onClose }: Props) {
       mapRef.current?.setView([lat, lng], 14);
       placeMarker(L, lat, lng, name);
     });
-    setSearchResults([]);
-    setSearchQuery('');
+    setSuggestions([]);
+    setShowSuggestions(false);
+    setSearchQuery(name);
   }, [placeMarker]);
 
   return (
@@ -128,36 +155,40 @@ export default function MapPicker({ onSelect, onClose }: Props) {
           </button>
         </div>
 
-        {/* Search bar */}
-        <div className="px-4 pt-3 pb-2 shrink-0 relative">
-          <div className="flex gap-2">
+        {/* Search bar with autocomplete */}
+        <div className="px-4 pt-3 pb-2 shrink-0 relative z-10">
+          <div className="relative flex items-center">
             <input
               type="text"
               value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleSearch()}
-              placeholder="搜索地点 · Search a place…"
-              style={{ marginBottom: 0 }}
+              onChange={handleInputChange}
+              onKeyDown={e => { if (e.key === 'Escape') { setShowSuggestions(false); } }}
+              onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+              placeholder="搜索地点或邮编 · Search place or postcode…"
+              style={{ marginBottom: 0, paddingRight: 36 }}
             />
-            <button
-              onClick={handleSearch}
-              disabled={searching}
-              className="shrink-0 w-9 h-9 rounded-lg flex items-center justify-center text-white transition-opacity hover:opacity-90 disabled:opacity-50"
-              style={{ background: 'linear-gradient(135deg, #9AACAA, #7DAFC8)' }}
-            >
-              {searching ? <Loader size={13} className="animate-spin" /> : <Search size={13} />}
-            </button>
+            <div className="absolute right-3 text-secondary/60 pointer-events-none">
+              {searching
+                ? <Loader size={13} className="animate-spin" />
+                : <MapPin size={13} />
+              }
+            </div>
           </div>
 
-          {/* Search results dropdown */}
-          {searchResults.length > 0 && (
-            <div className="absolute left-4 right-4 top-full z-50 glass-card overflow-hidden shadow-lg" style={{ marginTop: 2 }}>
-              {searchResults.map((r, i) => (
+          {/* Autocomplete dropdown */}
+          {showSuggestions && suggestions.length > 0 && (
+            <div
+              className="absolute left-4 right-4 glass-card overflow-hidden shadow-lg"
+              style={{ top: 'calc(100% - 4px)', zIndex: 50 }}
+            >
+              {suggestions.map((r, i) => (
                 <button
                   key={i}
-                  onClick={() => selectResult(r)}
-                  className="w-full text-left px-4 py-2.5 text-sm text-primary hover:bg-white/30 transition-colors border-b border-white/10 last:border-0 truncate"
+                  onMouseDown={e => { e.preventDefault(); selectSuggestion(r); }}
+                  className="w-full text-left px-4 py-2.5 text-sm text-primary hover:bg-white/30 transition-colors border-b border-white/10 last:border-0"
+                  style={{ display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
                 >
+                  <span className="text-secondary/50 mr-1.5" style={{ fontSize: 11 }}>📍</span>
                   {r.display_name}
                 </button>
               ))}
@@ -166,7 +197,7 @@ export default function MapPicker({ onSelect, onClose }: Props) {
         </div>
 
         {/* Map */}
-        <div className="relative flex-1">
+        <div className="relative flex-1" onClick={() => setShowSuggestions(false)}>
           <div ref={mapContainerRef} className="w-full h-full" />
           {reversing && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
