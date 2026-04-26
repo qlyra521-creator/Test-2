@@ -43,11 +43,12 @@ export default function Navigation() {
       <div className="flex items-center glass rounded-full overflow-hidden text-xs">
         <button
           onClick={() => setCurrentView('grid')}
-          className={`px-3 py-1.5 transition-all ${
+          className={`px-3 py-1.5 transition-all flex items-center gap-1 ${
             currentView === 'grid' ? 'bg-white/40 text-primary' : 'text-secondary'
           }`}
         >
-          星点 <span className="hidden sm:inline">Stars</span>
+          <span style={{ fontSize: 11 }}>✦</span>
+          <span>星点 <span className="hidden sm:inline">Stars</span></span>
         </button>
         <button
           onClick={() => setCurrentView('letters')}
