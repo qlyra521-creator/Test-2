@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { X, Camera, Mic, MicOff, MapPin } from 'lucide-react';
+import { X, Camera, Mic, MicOff, MapPin, Navigation } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { Memory, MemoryType, MEMORY_COLORS, MEMORY_LABELS } from '../types';
 import { dayOfJourney, toDateStr } from '../utils/dateUtils';
@@ -23,6 +23,7 @@ export default function AddMemoryModal({ defaultDate, onClose }: Props) {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [saving, setSaving] = useState(false);
+  const [locating, setLocating] = useState(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -75,6 +76,40 @@ export default function AddMemoryModal({ defaultDate, onClose }: Props) {
     setIsRecording(false);
     if (timerRef.current) clearInterval(timerRef.current);
   };
+
+  const detectLocation = useCallback(() => {
+    if (!navigator.geolocation) {
+      alert('浏览器不支持定位 · Geolocation not supported');
+      return;
+    }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async ({ coords }) => {
+        try {
+          const res = await fetch(
+            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${coords.latitude}&longitude=${coords.longitude}&localityLanguage=zh`
+          );
+          const data = await res.json();
+          const place =
+            data.locality ||
+            data.city ||
+            data.principalSubdivision ||
+            data.countryName ||
+            `${coords.latitude.toFixed(4)}, ${coords.longitude.toFixed(4)}`;
+          setLocation(place);
+        } catch {
+          setLocation(`${coords.latitude.toFixed(4)}, ${coords.longitude.toFixed(4)}`);
+        } finally {
+          setLocating(false);
+        }
+      },
+      () => {
+        alert('无法获取位置，请检查浏览器权限 · Location access denied');
+        setLocating(false);
+      },
+      { timeout: 10000 }
+    );
+  }, []);
 
   const handleSave = async () => {
     if (!currentUser) return;
@@ -184,6 +219,18 @@ export default function AddMemoryModal({ defaultDate, onClose }: Props) {
               onChange={e => setLocation(e.target.value)}
               placeholder="地点 Location（可选 optional）"
             />
+            <button
+              onClick={detectLocation}
+              disabled={locating}
+              title="获取当前位置 · Detect location"
+              className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110 disabled:opacity-50"
+              style={{ background: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.6)' }}
+            >
+              <Navigation
+                size={13}
+                className={`text-secondary ${locating ? 'animate-pulse' : ''}`}
+              />
+            </button>
           </div>
 
           {/* Photos */}
