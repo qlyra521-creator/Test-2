@@ -4,6 +4,10 @@ import MapPicker from './MapPicker';
 import { useApp } from '../context/AppContext';
 import { Memory, MemoryType, MEMORY_COLORS, MEMORY_LABELS } from '../types';
 import { dayOfJourney, toDateStr } from '../utils/dateUtils';
+import { supabase, MEDIA_BUCKET } from '../lib/supabase';
+
+interface PhotoItem { url: string; file?: File }
+interface VoiceItem { url: string; blob?: Blob }
 
 interface Props {
   defaultDate: string;
@@ -20,8 +24,12 @@ export default function AddMemoryModal({ defaultDate, onClose, editMemory }: Pro
   const [title, setTitle] = useState(editMemory?.title ?? '');
   const [content, setContent] = useState(editMemory?.content ?? '');
   const [location, setLocation] = useState(editMemory?.location ?? '');
-  const [photos, setPhotos] = useState<string[]>(editMemory?.photos ?? []);
-  const [voiceNote, setVoiceNote] = useState<string | undefined>(editMemory?.voiceNote);
+  const [photos, setPhotos] = useState<PhotoItem[]>(
+    editMemory?.photos.map(url => ({ url })) ?? []
+  );
+  const [voiceNote, setVoiceNote] = useState<VoiceItem | undefined>(
+    editMemory?.voiceNote ? { url: editMemory.voiceNote } : undefined
+  );
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -38,9 +46,7 @@ export default function AddMemoryModal({ defaultDate, onClose, editMemory }: Pro
     const files = e.target.files;
     if (!files) return;
     Array.from(files).forEach(file => {
-      const reader = new FileReader();
-      reader.onloadend = () => setPhotos(prev => [...prev, reader.result as string]);
-      reader.readAsDataURL(file);
+      setPhotos(prev => [...prev, { url: URL.createObjectURL(file), file }]);
     });
     e.target.value = '';
   }, []);
@@ -57,9 +63,7 @@ export default function AddMemoryModal({ defaultDate, onClose, editMemory }: Pro
       };
       mr.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
-        const reader = new FileReader();
-        reader.onloadend = () => setVoiceNote(reader.result as string);
-        reader.readAsDataURL(blob);
+        setVoiceNote({ url: URL.createObjectURL(blob), blob });
         stream.getTracks().forEach(t => t.stop());
       };
 
@@ -83,33 +87,64 @@ export default function AddMemoryModal({ defaultDate, onClose, editMemory }: Pro
     if (!title.trim()) { alert('请填写标题'); return; }
     setSaving(true);
 
-    if (editMemory) {
-      const updated: Memory = {
-        ...editMemory,
-        type,
-        title: title.trim(),
-        content: content.trim(),
-        photos,
-        voiceNote,
-        location: location.trim() || undefined,
-      };
-      updateMemory(updated);
-    } else {
-      const memory: Memory = {
-        id: `m_${Date.now()}_${Math.random().toString(36).slice(2)}`,
-        date,
-        author: currentUser,
-        type,
-        title: title.trim(),
-        content: content.trim(),
-        photos,
-        voiceNote,
-        location: location.trim() || undefined,
-        dayOfJourney: dayOfJourney(date),
-      };
-      addMemory(memory);
+    try {
+      const memoryId = editMemory?.id ?? `m_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+
+      const photoUrls: string[] = [];
+      for (const item of photos) {
+        if (item.file) {
+          const safeName = item.file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+          const path = `photos/${memoryId}/${Date.now()}-${safeName}`;
+          const { error } = await supabase.storage.from(MEDIA_BUCKET).upload(path, item.file);
+          if (!error) {
+            const { data } = supabase.storage.from(MEDIA_BUCKET).getPublicUrl(path);
+            photoUrls.push(data.publicUrl);
+          }
+        } else {
+          photoUrls.push(item.url);
+        }
+      }
+
+      let voiceNoteUrl: string | undefined;
+      if (voiceNote?.blob) {
+        const path = `voice/${memoryId}/${Date.now()}.webm`;
+        const { error } = await supabase.storage.from(MEDIA_BUCKET).upload(path, voiceNote.blob);
+        if (!error) {
+          const { data } = supabase.storage.from(MEDIA_BUCKET).getPublicUrl(path);
+          voiceNoteUrl = data.publicUrl;
+        }
+      } else {
+        voiceNoteUrl = voiceNote?.url;
+      }
+
+      if (editMemory) {
+        updateMemory({
+          ...editMemory,
+          type,
+          title: title.trim(),
+          content: content.trim(),
+          photos: photoUrls,
+          voiceNote: voiceNoteUrl,
+          location: location.trim() || undefined,
+        });
+      } else {
+        addMemory({
+          id: memoryId,
+          date,
+          author: currentUser,
+          type,
+          title: title.trim(),
+          content: content.trim(),
+          photos: photoUrls,
+          voiceNote: voiceNoteUrl,
+          location: location.trim() || undefined,
+          dayOfJourney: dayOfJourney(date),
+        });
+      }
+      onClose();
+    } finally {
+      setSaving(false);
     }
-    onClose();
   };
 
   return (
@@ -238,11 +273,15 @@ export default function AddMemoryModal({ defaultDate, onClose, editMemory }: Pro
             </div>
             {photos.length > 0 && (
               <div className="photo-grid">
-                {photos.map((p, i) => (
+                {photos.map((item, i) => (
                   <div key={i} className="relative group">
-                    <img src={p} alt="" className="rounded-lg" />
+                    <img src={item.url} alt="" className="rounded-lg" />
                     <button
-                      onClick={() => setPhotos(prev => prev.filter((_, j) => j !== i))}
+                      onClick={() => setPhotos(prev => {
+                        const p = prev[i];
+                        if (p.file) URL.revokeObjectURL(p.url);
+                        return prev.filter((_, j) => j !== i);
+                      })}
                       className="absolute top-1 right-1 w-5 h-5 bg-black/50 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       <X size={10} />
@@ -278,7 +317,10 @@ export default function AddMemoryModal({ defaultDate, onClose, editMemory }: Pro
               </div>
               {voiceNote && !isRecording && (
                 <button
-                  onClick={() => setVoiceNote(undefined)}
+                  onClick={() => {
+                    if (voiceNote.blob) URL.revokeObjectURL(voiceNote.url);
+                    setVoiceNote(undefined);
+                  }}
                   className="text-xs text-secondary/60 hover:text-red-400 transition-colors"
                 >
                   删除 · Remove
@@ -307,7 +349,7 @@ export default function AddMemoryModal({ defaultDate, onClose, editMemory }: Pro
             className="px-6 py-2 rounded-full text-sm text-white transition-all hover:opacity-90 disabled:opacity-35 flex items-center gap-1.5"
             style={{ background: 'linear-gradient(135deg, #C97EA0 0%, #9AACAA 100%)', boxShadow: '0 2px 12px rgba(201,126,160,0.3)' }}
           >
-            {saving ? '保存中…' : '✦ 保存记忆 · Save'}
+            {saving ? '上传中… Uploading' : '✦ 保存记忆 · Save'}
           </button>
         </div>
       </div>

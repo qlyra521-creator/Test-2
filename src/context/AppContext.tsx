@@ -1,6 +1,12 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { UserId, ViewMode, Theme, AppView, Memory, Letter } from '../types';
-import { supabase } from '../lib/supabase';
+import { supabase, MEDIA_BUCKET } from '../lib/supabase';
+
+function storagePathFromUrl(url: string): string | null {
+  const marker = `/${MEDIA_BUCKET}/`;
+  const idx = url.indexOf(marker);
+  return idx !== -1 ? url.slice(idx + marker.length) : null;
+}
 
 interface AppContextType {
   currentUser: UserId | null;
@@ -168,7 +174,20 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const deleteMemory = useCallback(async (id: string) => {
     setMemories(prev => prev.filter(m => m.id !== id));
+    const { data } = await supabase.from('memories').select('photos,voice_note').eq('id', id).single();
     await supabase.from('memories').delete().eq('id', id);
+    if (data) {
+      const paths: string[] = [];
+      for (const url of (data.photos as string[]) ?? []) {
+        const p = storagePathFromUrl(url);
+        if (p) paths.push(p);
+      }
+      if (data.voice_note) {
+        const p = storagePathFromUrl(data.voice_note as string);
+        if (p) paths.push(p);
+      }
+      if (paths.length > 0) await supabase.storage.from(MEDIA_BUCKET).remove(paths);
+    }
   }, []);
 
   const addLetter = useCallback(async (l: Letter) => {
