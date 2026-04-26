@@ -116,7 +116,15 @@ export default function SurpriseModal({ memories, onClose }: Props) {
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid rgba(200, 190, 210, 0.2)' }}>
           <div className="flex items-center gap-2">
-            <span style={{ fontSize: 16 }}>🎁</span>
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M9 1.5L10.5 7H16L11.5 10.5L13 16L9 12.5L5 16L6.5 10.5L2 7H7.5L9 1.5Z" fill="url(#surpriseGrad)" opacity="0.85"/>
+              <defs>
+                <linearGradient id="surpriseGrad" x1="2" y1="1.5" x2="16" y2="16" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#C97EA0"/>
+                  <stop offset="1" stopColor="#7DAFC8"/>
+                </linearGradient>
+              </defs>
+            </svg>
             <span className="font-serif text-lg font-light text-primary">{'惊喜 · Surprise'}</span>
           </div>
           <button onClick={onClose} className="text-secondary hover:text-primary transition-colors p-1">
@@ -149,12 +157,25 @@ export default function SurpriseModal({ memories, onClose }: Props) {
                         fontFamily: 'Cormorant Garamond, serif',
                         fontSize: 13,
                         display: '-webkit-box',
-                        WebkitLineClamp: 4,
+                        WebkitLineClamp: 3,
                         WebkitBoxOrient: 'vertical',
                         overflow: 'hidden',
                       }}
                     >
                       {memory.content}
+                    </div>
+                  )}
+                  {memory.photos && memory.photos.length > 0 && (
+                    <div className="flex gap-1.5 mt-3 overflow-hidden">
+                      {memory.photos.slice(0, 3).map((src, i) => (
+                        <img
+                          key={i}
+                          src={src}
+                          alt=""
+                          className="rounded-lg object-cover"
+                          style={{ width: memory.photos.length === 1 ? '100%' : 80, height: 72, flexShrink: 0 }}
+                        />
+                      ))}
                     </div>
                   )}
                 </div>
