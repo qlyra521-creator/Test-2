@@ -44,6 +44,7 @@ export default function AddMemoryModal({ defaultDate, onClose, editMemory }: Pro
       };
       reader.readAsDataURL(file);
     });
+    e.target.value = '';
   }, []);
 
   const startRecording = async () => {
