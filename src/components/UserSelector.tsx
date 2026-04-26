@@ -28,9 +28,27 @@ export default function UserSelector() {
 
       {/* Header */}
       <div className="text-center mb-12 animate-fade-in">
-        <h1 className="font-serif text-6xl font-light text-primary mb-3 tracking-wide">
-          Remember Me
-        </h1>
+        {/* Title with mirror reflection */}
+        <div className="relative inline-block mb-3">
+          <h1 className="font-serif text-6xl font-light text-primary tracking-wide leading-none">
+            Remember We
+          </h1>
+          {/* Mirror reflection */}
+          <div
+            aria-hidden="true"
+            className="font-serif text-6xl font-light tracking-wide leading-none select-none pointer-events-none"
+            style={{
+              transform: 'scaleY(-1)',
+              opacity: 0.18,
+              color: 'var(--text-primary)',
+              WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 100%)',
+              maskImage: 'linear-gradient(to bottom, transparent 0%, black 100%)',
+              marginTop: '2px',
+            }}
+          >
+            Remember We
+          </div>
+        </div>
         <p className="text-secondary text-sm tracking-widest uppercase">
           Every point is a star in our shared sky
         </p>

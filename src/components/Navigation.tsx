@@ -25,7 +25,7 @@ export default function Navigation() {
         onClick={() => setCurrentView('grid')}
         className="font-serif text-xl font-light text-primary mr-2 shrink-0"
       >
-        Remember Me
+        Remember We
       </button>
 
       {/* Spacer */}
