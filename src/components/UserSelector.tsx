@@ -103,7 +103,8 @@ export default function UserSelector() {
 
       {/* Profile cards */}
       {showProfiles && (
-        <div className="flex gap-6 animate-slide-up">
+        <div className="flex flex-col items-center gap-6 animate-slide-up">
+        <div className="flex gap-6">
           {profiles.map((profile) => (
             <button
               key={profile.id}
@@ -138,6 +139,13 @@ export default function UserSelector() {
               </div>
             </button>
           ))}
+        </div>
+        <button
+          onClick={() => setShowProfiles(false)}
+          className="text-secondary/60 hover:text-secondary transition-colors text-sm tracking-wider"
+        >
+          ← 返回 · Back
+        </button>
         </div>
       )}
 
