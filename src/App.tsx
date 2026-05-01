@@ -1,4 +1,5 @@
 import React from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { useApp } from './context/AppContext';
 import UserSelector from './components/UserSelector';
 import Navigation from './components/Navigation';
@@ -51,5 +52,10 @@ export default function App() {
   const { currentUser, loading, dbError } = useApp();
   if (loading) return <LoadingScreen />;
   if (dbError) return <ErrorScreen message={dbError} />;
-  return currentUser ? <MainApp /> : <UserSelector />;
+  return (
+    <>
+      {currentUser ? <MainApp /> : <UserSelector />}
+      <Analytics />
+    </>
+  );
 }
